@@ -1,9 +1,12 @@
+import 'package:expense_tracker/widgets/app_bar.dart';
 import 'package:expense_tracker/widgets/current_balance_card.dart';
+import 'package:expense_tracker/widgets/recent_transactions.dart';
+import 'package:expense_tracker/widgets/search_field.dart';
 import 'package:expense_tracker/widgets/total_balance_card.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -13,9 +16,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: buildAppBar(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(24.0),
           child: Column(
             spacing: 16,
             children: [
@@ -23,9 +27,24 @@ class _HomePageState extends State<HomePage> {
               Row(
                 spacing: 16,
                 children: [
-                  TotalBalanceCard(isExpense: true),
-                  TotalBalanceCard(isExpense: false),
+                  Expanded(child: TotalBalanceCard(isExpense: true)),
+                  Expanded(child: TotalBalanceCard(isExpense: false)),
                 ],
+              ),
+              SearchField(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Recent Transactions'),
+                  DropdownButton(
+                    items: [DropdownMenuItem(child: Text('Food'))],
+                    onChanged: (_) {},
+                  ),
+                ],
+              ),
+              Divider(),
+              Expanded(
+                child: RecentTransactionsList(names: ['suhaib', 'skdfjsa']),
               ),
             ],
           ),

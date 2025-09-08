@@ -14,7 +14,7 @@ class _TotalBalanceCardState extends State<TotalBalanceCard> {
     return Expanded(
       child: Container(
         width: double.infinity,
-        height: 120,
+        height: 100,
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 247, 246, 246),
           borderRadius: BorderRadius.all(Radius.circular(20)),
