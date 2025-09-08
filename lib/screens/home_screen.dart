@@ -1,4 +1,5 @@
 import 'package:expense_tracker/widgets/app_bar.dart';
+import 'package:expense_tracker/widgets/bottom_bar.dart';
 import 'package:expense_tracker/widgets/current_balance_card.dart';
 import 'package:expense_tracker/widgets/recent_transactions.dart';
 import 'package:expense_tracker/widgets/search_field.dart';
@@ -50,6 +51,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      bottomNavigationBar: buildBottomNavBar(),
     );
   }
 }
