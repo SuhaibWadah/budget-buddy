@@ -21,7 +21,10 @@ class _RecentTransactionsListState extends State<RecentTransactionsList> {
           subtitle: Row(children: [Text('Food'), Text('90/1/2034')]),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [Text('-43\$'), Icon(Icons.delete)],
+            children: [
+              Text('-43\$'),
+              Icon(Icons.delete, color: Colors.red[700]),
+            ],
           ),
           tileColor: Colors.grey[200],
           shape: RoundedRectangleBorder(

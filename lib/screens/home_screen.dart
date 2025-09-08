@@ -32,12 +32,14 @@ class _HomePageState extends State<HomePage> {
                   Expanded(child: TotalBalanceCard(isExpense: false)),
                 ],
               ),
+              SizedBox(height: 8),
               SearchField(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Recent Transactions'),
                   DropdownButton(
+                    style: TextStyle(fontSize: 20, color: Colors.black),
                     items: [DropdownMenuItem(child: Text('Food'))],
                     onChanged: (_) {},
                   ),

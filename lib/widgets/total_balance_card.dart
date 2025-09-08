@@ -21,7 +21,7 @@ class _TotalBalanceCardState extends State<TotalBalanceCard> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(70),
-              blurRadius: 10,
+              blurRadius: 4,
               spreadRadius: 1,
               offset: Offset(2, 4),
             ),
