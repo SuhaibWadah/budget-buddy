@@ -1,10 +1,10 @@
-Budget Buddy 💰📊
+# Budget Buddy 💰📊
 
-A modern expense tracker app to manage your personal finances with both offline and online support.
+### A modern expense tracker app to manage your personal finances with both offline and online support.
 
 Budget Buddy helps you take control of your spending habits by combining powerful state management, offline persistence, and cloud synchronization in one seamless experience.
 
-✨ Features
+## ✨ Features
 
 📂 Expense & Income Tracking – Add, edit, and delete transactions with categories and notes.
 
@@ -26,7 +26,7 @@ Online Mode: Sync with Firebase Firestore when connected to the internet.
 
 🌙 Dark & Light Theme – Switch themes to match your preference.
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 
 Flutter – Cross-platform app development
 
@@ -36,7 +36,7 @@ SQLite + Hive – Local persistence
 
 Firebase (Auth + Firestore) – Remote database & authentication
 
-🚀 Getting Started
+## 🚀 Getting Started
 
 Clone the repo and run the app:
 git clone https://github.com/yourusername/budget-buddy.git
