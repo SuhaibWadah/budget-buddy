@@ -1,46 +1,76 @@
 import 'package:sqflite/sqflite.dart';
-
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
-  factory DatabaseHelper() => _instance;
-  DatabaseHelper._internal();
+  static Database? _db;
 
-  static Database? _database;
-
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDb();
-    return _database!;
+  Future<Database?> get db async {
+    if (_db == null) {
+      _db = await initDb();
+      return _db;
+    } else {
+      return _db;
+    }
   }
 
-  Future<Database> _initDb() async {
-    String path = join(await getDatabasesPath(), 'transactions.db');
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
+  Future<Database> initDb() async {
+    String databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'expenses.db');
+    Database mydb = await openDatabase(
+      path,
+      version: 1,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
+    return mydb;
   }
 
-  void _onCreate(Database db, int version) async {
+  _onCreate(Database db, int version) async {
     await db.execute('''
-      create table transactions(
-      id text primary key,
-      title text,
-      note text,
-      category text,
-      amount real,
-      date text,
+      create table "transactions"(
+      "id" integer not null primary key,
+      "title" text not null,
+      "note" text,
+      "date" text not null,
+      "isExpense" integer not null,
+      "isSynced" integer not null
       )
-''');
+    ''');
+  }
 
-    await db.execute('''
-    create table categories(
-    id integer primary key autoincrement,
-    name text unique,
-    )
-''');
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    print('sdf');
+  }
 
-    await db.insert('categories', {'name': 'Food'});
-    await db.insert('categories', {'name': 'Shopping'});
-    await db.insert('categories', {'name': 'Bills'});
+  Future<List<Map>> readData(String query) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery(query);
+    return response;
+  }
+
+  Future<int> insert(String table, Map<String, Object?> value) async {
+    Database? mydb = await db;
+    int response = await mydb!.insert(table, value);
+    return response;
+  }
+
+  Future<int> update(
+    String table,
+    Map<String, Object?> value,
+    String? whereCondition,
+  ) async {
+    Database? mydb = await db;
+    int response = await mydb!.update(
+      table,
+      value,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return response;
+  }
+
+  Future<int> delete(String table, String? whereCondition) async {
+    Database? mydb = await db;
+    int response = await mydb!.delete(table, where: whereCondition);
+    return response;
   }
 }
