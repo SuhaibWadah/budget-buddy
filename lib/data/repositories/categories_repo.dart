@@ -30,16 +30,14 @@ class CategoriesRepo {
     }
   }
 
-  Future<List<Map>> readCategories() =>
-      _runDbOperation('readCategories', (db) => db.query('categories'));
+  Future<List<Map>> readCategories(String query) => _runDbOperation(
+    'readCategories',
+    (db) => db.query(query, columns: ['name']),
+  );
 
   Future<int> insertCategory(Map<String, Object?> values) => _runDbOperation(
     'insertCategory',
-    (db) => db.insert(
-      'categories',
-      values,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    ),
+    (db) => db.insert('categories', values),
   );
 
   Future<int> deleteCategory(int categoryId) => _runDbOperation(

@@ -30,15 +30,44 @@ class TransactionsRepo {
     }
   }
 
-  Future<List<Map>> readTransactions() =>
-      _runDbOperation('readTransactions', (db) => db.query('transactions'));
+  Future<List<Map>> readRecentTransactions() =>
+      _runDbOperation('readRecent10transactions', (db) async {
+        return await db.rawQuery('''
+t.id, t.title, t.note, t.amount, t.date, t.isExpense,
+        c.name AS categoryName from transactions t
+    join categories c on t.category_id = c.id
+    order by t.date desc
+    limit 10
+         
+''');
+      });
 
-  Future<int> insertCategory(Map<String, Object?> values) => _runDbOperation(
+  Future<List<Map<String, dynamic>>> readTransactions({int? categoryId}) =>
+      _runDbOperation('readTransactions', (db) async {
+        // Base query
+        String sql = '''
+    select t.id, t.title, t.note, t.amount, t.date, t.isExpense,
+           t.isSynced, c.id AS categoryId, c.name AS categoryName
+    from transactions t
+    join categories c ON t.category_id = c.id
+  ''';
+
+        // Add filter if categoryId is provided
+        List<dynamic> args = [];
+        if (categoryId != null) {
+          sql += ' WHERE c.id = ?';
+          args.add(categoryId);
+        }
+
+        return await db.rawQuery(sql, args);
+      });
+
+  Future<int> insertTransaction(Map<String, Object?> values) => _runDbOperation(
     'insertTransaction',
     (db) => db.insert('transactions', values),
   );
 
-  Future<int> deleteCategory(int transactionId) => _runDbOperation(
+  Future<int> deleteTransaction(int transactionId) => _runDbOperation(
     'deleteTransaction',
     (db) =>
         db.delete('transactions', where: 'id = ?', whereArgs: [transactionId]),
