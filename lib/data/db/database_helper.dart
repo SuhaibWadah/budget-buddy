@@ -33,44 +33,23 @@ class DatabaseHelper {
       "note" text,
       "date" text not null,
       "isExpense" integer not null,
-      "isSynced" integer not null
+      "isSynced" integer not null,
+       foreign key (category_id) references categories(id) on delete cascade
       )
     ''');
+
+    await db.execute('''
+    create table "categories"(
+    "id" integer not null primary key,
+    "name" text not null unique,
+    )
+''');
+
+    await db.execute('''
+  INSERT INTO categories (name)
+  VALUES ("Food"), ("Transport"), ("Entertainment"), ("Family"), ("Friends"), ("Grocery"), ("Rent"), ("Personal Care"),("Shopping"), ("Health & Medicine") ("Utilities"), ("Gifts")
+ ''');
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    print('sdf');
-  }
-
-  Future<List<Map>> readData(String query) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery(query);
-    return response;
-  }
-
-  Future<int> insert(String table, Map<String, Object?> value) async {
-    Database? mydb = await db;
-    int response = await mydb!.insert(table, value);
-    return response;
-  }
-
-  Future<int> update(
-    String table,
-    Map<String, Object?> value,
-    String? whereCondition,
-  ) async {
-    Database? mydb = await db;
-    int response = await mydb!.update(
-      table,
-      value,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return response;
-  }
-
-  Future<int> delete(String table, String? whereCondition) async {
-    Database? mydb = await db;
-    int response = await mydb!.delete(table, where: whereCondition);
-    return response;
-  }
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {}
 }
