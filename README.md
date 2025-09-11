@@ -39,7 +39,7 @@ Firebase (Auth + Firestore) – Remote database & authentication
 ## 🚀 Getting Started
 
 Clone the repo and run the app:
-git clone https://github.com/yourusername/budget-buddy.git
+git clone https://github.com/SuhaibWadah/budget-buddy.git
 cd budget-buddy
 flutter pub get
 flutter run
