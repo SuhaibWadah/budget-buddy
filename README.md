@@ -1,16 +1,45 @@
-# expense_tracker
+# Budget Buddy 💰📊
 
-A new Flutter project.
+### A modern expense tracker app to manage your personal finances with both offline and online support.
 
-## Getting Started
+Budget Buddy helps you take control of your spending habits by combining powerful state management, offline persistence, and cloud synchronization in one seamless experience.
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+📂 Expense & Income Tracking – Add, edit, and delete transactions with categories and notes.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+📅 History & Insights – View detailed logs and summaries of your expenses and incomes over time.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+📊 Analytics Dashboard – Visualize your spending patterns with charts and statistics.
+
+🔐 Authentication – Secure login and signup using Firebase Authentication.
+
+📡 Hybrid Storage
+
+Offline Mode: Store data locally using SQLite and Hive.
+
+Online Mode: Sync with Firebase Firestore when connected to the internet.
+
+🔄 Auto-Sync – Changes made offline are automatically pushed to the cloud when online.
+
+🎯 State Management with Provider – Efficient and reactive app-wide state handling.
+
+🌙 Dark & Light Theme – Switch themes to match your preference.
+
+## 🛠️ Tech Stack
+
+Flutter – Cross-platform app development
+
+Provider – State management
+
+SQLite + Hive – Local persistence
+
+Firebase (Auth + Firestore) – Remote database & authentication
+
+## 🚀 Getting Started
+
+Clone the repo and run the app:
+git clone https://github.com/yourusername/budget-buddy.git
+cd budget-buddy
+flutter pub get
+flutter run
