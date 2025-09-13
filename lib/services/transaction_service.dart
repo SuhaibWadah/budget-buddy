@@ -1,24 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/data/models/transaction_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TransactionService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser;
+  late final userDb = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user?.uid);
   final String _collection = 'transactions';
 
   Future<void> addTransaction(TransactionModel tx) async {
-    await _db.collection(_collection).doc(tx.id).set(tx.toMap(tx));
+    await userDb.collection(_collection).doc(tx.id).set(tx.toFirestore());
   }
 
   Future<void> updateTransaction(TransactionModel tx) async {
-    await _db.collection(_collection).doc(tx.id).update(tx.toMap(tx));
+    await userDb.collection(_collection).doc(tx.id).update(tx.toFirestore());
   }
 
   Future<void> deleteTransaction(String id) async {
-    await _db.collection(_collection).doc(id).delete();
+    await userDb.collection(_collection).doc(id).delete();
   }
 
   Future<List<TransactionModel>> readTransactions() async {
-    final query = await _db.collection(_collection).get();
+    final query = await userDb.collection(_collection).get();
     return query.docs
         .map((doc) => TransactionModel.fromMap({"id": doc.id, ...doc.data()}))
         .toList();
