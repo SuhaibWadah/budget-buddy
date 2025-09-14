@@ -25,15 +25,17 @@ class DatabaseHelper {
     return mydb;
   }
 
-  _onCreate(Database db, int version) async {
+  Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       create table "transactions"(
-      "id" integer not null primary key,
+      "id" text not null primary key,
       "title" text not null,
       "note" text,
       "date" text not null,
+      "amount" real not null,
       "isExpense" integer not null,
       "isSynced" integer not null,
+      "categoryId" integer not null,
        foreign key (category_id) references categories(id) on delete cascade
       )
     ''');
@@ -42,13 +44,25 @@ class DatabaseHelper {
     create table "categories"(
     "id" integer not null primary key,
     "name" text not null unique,
+    "isSynced" integer not null,
     )
 ''');
 
     await db.execute('''
-  INSERT INTO categories (name)
-  VALUES ("Food"), ("Transport"), ("Entertainment"), ("Family"), ("Friends"), ("Grocery"), ("Rent"), ("Personal Care"),("Shopping"), ("Health & Medicine") ("Utilities"), ("Gifts")
- ''');
+  INSERT INTO categories (name, isSynced) VALUES
+    ("Food", 0),
+    ("Transport", 0),
+    ("Entertainment", 0),
+    ("Family", 0),
+    ("Friends", 0),
+    ("Grocery", 0),
+    ("Rent", 0),
+    ("Personal Care", 0),
+    ("Shopping", 0),
+    ("Health & Medicine", 0),
+    ("Utilities", 0),
+    ("Gifts", 0)
+    ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {}

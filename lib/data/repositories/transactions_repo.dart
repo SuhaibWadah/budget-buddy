@@ -42,7 +42,7 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
 ''');
       });
 
-  Future<List<Map<String, dynamic>>> readTransactions({int? categoryId}) =>
+  Future<List<Map<String, dynamic>>> readTransactions({String? transId}) =>
       _runDbOperation('readTransactions', (db) async {
         // Base query
         String sql = '''
@@ -54,9 +54,9 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
 
         // Add filter if categoryId is provided
         List<dynamic> args = [];
-        if (categoryId != null) {
+        if (transId != null) {
           sql += ' WHERE c.id = ?';
-          args.add(categoryId);
+          args.add(transId);
         }
 
         return await db.rawQuery(sql, args);
@@ -67,14 +67,14 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
     (db) => db.insert('transactions', values),
   );
 
-  Future<int> deleteTransaction(int transactionId) => _runDbOperation(
+  Future<int> deleteTransaction(String transactionId) => _runDbOperation(
     'deleteTransaction',
     (db) =>
         db.delete('transactions', where: 'id = ?', whereArgs: [transactionId]),
   );
 
   Future<int> updateTransaction(
-    int transactionId,
+    String transactionId,
     Map<String, Object?> values,
   ) => _runDbOperation(
     'updateTransaction',
@@ -84,6 +84,16 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
       where: 'id = ?',
       whereArgs: [transactionId],
       conflictAlgorithm: ConflictAlgorithm.replace,
+    ),
+  );
+
+  Future<int> markTransactionAsSynced(String transactionId) => _runDbOperation(
+    'markTransactionAsSynced',
+    (db) => db.update(
+      'transactions',
+      {'isSynced': 1},
+      where: 'id: ?',
+      whereArgs: [transactionId],
     ),
   );
 }

@@ -32,7 +32,7 @@ class CategoriesRepo {
 
   Future<List<Map>> readCategories(String query) => _runDbOperation(
     'readCategories',
-    (db) => db.query(query, columns: ['name']),
+    (db) => db.query('categories', columns: ['name']),
   );
 
   Future<int> insertCategory(Map<String, Object?> values) => _runDbOperation(
@@ -43,5 +43,15 @@ class CategoriesRepo {
   Future<int> deleteCategory(int categoryId) => _runDbOperation(
     'deleteCategory',
     (db) => db.delete('categories', where: 'id = ?', whereArgs: [categoryId]),
+  );
+
+  Future<int> markCategoryAsSynced(int categoryId) => _runDbOperation(
+    'markAsSynced',
+    (db) => db.update(
+      'categories',
+      {'isSynced': 1},
+      where: 'id = ?',
+      whereArgs: [categoryId],
+    ),
   );
 }

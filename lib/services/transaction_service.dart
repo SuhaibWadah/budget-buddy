@@ -9,20 +9,39 @@ class TransactionService {
       .doc(user?.uid);
   final String _collection = 'transactions';
 
-  Future<void> addTransaction(TransactionModel tx) async {
-    await userDb.collection(_collection).doc(tx.id).set(tx.toFirestore());
+  Future<void> addTransaction(int? uid, TransactionModel tx) async {
+    await userDb
+        .collection('users')
+        .doc(uid.toString())
+        .collection(_collection)
+        .doc(tx.id)
+        .set(tx.toFirestore());
   }
 
-  Future<void> updateTransaction(TransactionModel tx) async {
-    await userDb.collection(_collection).doc(tx.id).update(tx.toFirestore());
+  Future<void> updateTransaction(int? uid, TransactionModel tx) async {
+    await userDb
+        .collection('users')
+        .doc(uid.toString())
+        .collection(_collection)
+        .doc(tx.id)
+        .update(tx.toFirestore());
   }
 
-  Future<void> deleteTransaction(String id) async {
-    await userDb.collection(_collection).doc(id).delete();
+  Future<void> deleteTransaction(int? uid, String id) async {
+    await userDb
+        .collection('users')
+        .doc(uid.toString())
+        .collection(_collection)
+        .doc(id)
+        .delete();
   }
 
-  Future<List<TransactionModel>> readTransactions() async {
-    final query = await userDb.collection(_collection).get();
+  Future<List<TransactionModel>> readTransactions(int? uid) async {
+    final query = await userDb
+        .collection('users')
+        .doc(uid.toString())
+        .collection(_collection)
+        .get();
     return query.docs
         .map((doc) => TransactionModel.fromMap({"id": doc.id, ...doc.data()}))
         .toList();
