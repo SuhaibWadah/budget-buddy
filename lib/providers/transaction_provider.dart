@@ -10,7 +10,7 @@ class TransactionProvider with ChangeNotifier {
   final TransactionService _transService;
 
   Future<String> _getUid() async {
-    final userId = await _authProvider.user!.uid;
+    final userId = _authProvider.user!.uid;
     return userId;
   }
 
@@ -18,6 +18,7 @@ class TransactionProvider with ChangeNotifier {
   List<TransactionModel> get transactions => _transactions;
 
   TransactionProvider(this._authProvider, this._transRepo, this._transService);
+
   Future<void> addTransaction(TransactionModel trans) async {
     final id = await _transRepo.insertTransaction(trans.toMap());
     trans.id = id as String;
