@@ -5,13 +5,17 @@ import 'package:expense_tracker/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 
 class TransactionProvider with ChangeNotifier {
-  final AuthProvider _authProvider;
+  AuthProvider? _authProvider;
   final TransactionsRepo _transRepo;
   final TransactionService _transService;
 
   Future<String> _getUid() async {
-    final userId = _authProvider.user!.uid;
+    final userId = _authProvider!.user!.uid;
     return userId;
+  }
+
+  void updateAuth(AuthProvider authProvider) {
+    _authProvider = authProvider;
   }
 
   List<TransactionModel> _transactions = [];
@@ -25,7 +29,7 @@ class TransactionProvider with ChangeNotifier {
     _transactions.add(trans);
     notifyListeners();
 
-    if (_authProvider.isLoggedIn) {
+    if (_authProvider!.isLoggedIn) {
       trans.isSynced = true;
       await _transService.addTransaction(await _getUid(), trans);
       await _transRepo.markTransactionAsSynced(trans.id);
@@ -38,7 +42,7 @@ class TransactionProvider with ChangeNotifier {
     if (index != -1) _transactions[index] = trans;
     notifyListeners();
 
-    if (_authProvider.isLoggedIn) {
+    if (_authProvider!.isLoggedIn) {
       await _transService.updateTransaction(trans.id, trans);
       trans.isSynced = true;
       await _transRepo.markTransactionAsSynced(trans.id);
@@ -49,7 +53,7 @@ class TransactionProvider with ChangeNotifier {
     await _transRepo.deleteTransaction(id);
     _transactions.removeWhere((t) => t.id == id);
     notifyListeners();
-    if (_authProvider.isLoggedIn) {
+    if (_authProvider!.isLoggedIn) {
       await _transService.deleteTransaction(await _getUid(), id);
     }
   }
@@ -61,7 +65,7 @@ class TransactionProvider with ChangeNotifier {
         .toList();
     notifyListeners();
 
-    if (_authProvider.isLoggedIn) {
+    if (_authProvider!.isLoggedIn) {
       final remote = await _transService.readTransactions(await _getUid());
       for (var tx in remote) {
         if (!_transactions.any((t) => t.id == tx.id)) {

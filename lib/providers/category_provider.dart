@@ -5,14 +5,18 @@ import 'package:expense_tracker/services/category_service.dart';
 import 'package:flutter/material.dart';
 
 class CategoryProvider with ChangeNotifier {
-  final AuthProvider _authProvider;
+  AuthProvider? _authProvider;
   final CategoriesRepo _catRepo;
   final CategoryService _catServie;
 
   List<Category> _categories = [];
   List<Category> get categories => _categories;
 
-  CategoryProvider(this._authProvider, this._catRepo, this._catServie);
+  CategoryProvider(this._catRepo, this._catServie);
+
+  void updateAuth(AuthProvider authProvider) {
+    _authProvider = authProvider;
+  }
 
   Future<void> readCategories() async {
     final local = await _catRepo.readCategories();
@@ -28,8 +32,8 @@ class CategoryProvider with ChangeNotifier {
     categories.add(cat);
     notifyListeners();
     // Syncing with firebase if user is logged in
-    if (_authProvider.isLoggedIn) {
-      await _catServie.addCategory(_authProvider.user!.uid as int, cat);
+    if (_authProvider!.isLoggedIn) {
+      await _catServie.addCategory(_authProvider!.user!.uid as int, cat);
       cat.isSynced = true;
       _catRepo.markCategoryAsSynced(cat.id);
     }
@@ -40,8 +44,8 @@ class CategoryProvider with ChangeNotifier {
     categories.removeWhere((cat) => cat.id == id);
     notifyListeners();
 
-    if (_authProvider.isLoggedIn) {
-      await _catServie.deleteCategory(_authProvider.user!.uid as int, id);
+    if (_authProvider!.isLoggedIn) {
+      await _catServie.deleteCategory(_authProvider!.user!.uid as int, id);
     }
   }
 }

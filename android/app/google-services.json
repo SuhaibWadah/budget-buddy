@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:187356985024:android:66f0add1f60163ab35df25",
+        "android_client_info": {
+          "package_name": "com.example.expense_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3vlAj54pxfA7qWxR9vlTAvEkvE2sAMNI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:187356985024:android:a6ebcfe0ccd8c0d935df25",
         "android_client_info": {
           "package_name": "com.suhaib.budgetbuddy"
