@@ -27,7 +27,7 @@ class TransactionModel {
     return {
       'id': id,
       'title': title,
-      'note': note,
+      'note': note ?? '',
       'amount': amount,
       'date': date,
       'isExpense': isExpense ? 1 : 0,
@@ -41,7 +41,7 @@ class TransactionModel {
     return {
       'id': id,
       'title': title,
-      'note': note,
+      'note': note ?? '',
       'amount': amount,
       'date': date, // Firestore can store DateTime directly
       'isExpense': isExpense,
@@ -56,10 +56,10 @@ class TransactionModel {
       title: map['title'],
       note: map['note'],
       amount: map['amount'],
-      date: map['date'], // store date as ISO string in SQLite
-      isExpense: map['isExpense'] == 1,
-      isSynced: map['isSynced'] == 1,
-      categoryId: map['categoryId'],
+      date: map['date'],
+      isExpense: (map['isExpense'] ?? 0) == 1,
+      isSynced: (map['isSynced'] ?? 0) == 1,
+      categoryId: (map['categoryId'] ?? 0) as int,
     );
   }
 

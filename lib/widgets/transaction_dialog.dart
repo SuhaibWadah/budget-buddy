@@ -42,22 +42,13 @@ class _TransactionDialogState extends State<TransactionDialog> {
   }
 
   void _submit(BuildContext context) async {
-    debugPrint(
-        '1st ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
-
     final transProvider = context.read<TransactionProvider>();
     if (_formKey.currentState?.validate() != true || _selectedDate == null) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Please fill in all fields')));
       return;
     }
 
     String formatted =
         "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}";
-    debugPrint(
-        '2nd ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
     final transaction = TransactionModel(
       title: _titleController.text.trim(),
       amount: double.parse(_amountController.text.trim()),
@@ -68,23 +59,15 @@ class _TransactionDialogState extends State<TransactionDialog> {
     setState(() {
       isLoading = true;
     });
-    debugPrint(
-        '3rd ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
-
     await transProvider.addTransaction(transaction);
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('Transaction saved')));
-    debugPrint(
-        '4th ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
 
     setState(() {
       isLoading = false;
     });
-    debugPrint(
-        '5th ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
-
     clearFields();
     Navigator.of(context).pop();
   }
@@ -148,11 +131,9 @@ class _TransactionDialogState extends State<TransactionDialog> {
               hint: Text('Select a Category'),
               validator: (value) {
                 if (value == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select a category')),
-                  );
-                  return;
+                  return 'Please Select a Category';
                 }
+                return null;
               },
               initialValue: categoryId,
               items: categories.map((cat) {

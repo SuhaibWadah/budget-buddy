@@ -1,3 +1,4 @@
+import 'package:expense_tracker/data/db/database_helper.dart';
 import 'package:expense_tracker/data/models/transaction_model.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/widgets/app_bar.dart';
@@ -18,9 +19,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<TransactionModel> _transactions = [];
+
+  void initState() {
+    super.initState();
+    // Load transactions once the widget is ready
+    Future.microtask(() async {
+      if (mounted) {
+        final data =
+            await Provider.of<TransactionProvider>(context, listen: false)
+                .readRecentTransactions();
+      } else {
+        print('skldfjklasjdf');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final transactions = context.watch<TransactionProvider>().transactions;
+    final provider = Provider.of<TransactionProvider>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -57,20 +74,11 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 8),
               SearchField(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Recent Transactions'),
-                  DropdownButton(
-                    style: TextStyle(fontSize: 20, color: Colors.black),
-                    items: [DropdownMenuItem(child: Text('Food'))],
-                    onChanged: (_) {},
-                  ),
-                ],
-              ),
+              Text('Recent Transactions'),
               Divider(),
               Expanded(
-                  child: RecentTransactionsList(transactions: transactions)),
+                  child: RecentTransactionsList(
+                      transactions: provider.transactions)),
             ],
           ),
         ),

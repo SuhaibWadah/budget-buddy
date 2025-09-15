@@ -75,4 +75,13 @@ class TransactionProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> readRecentTransactions() async {
+    final local = await _transRepo.readRecentTransactions();
+    for (var txMap in local) {
+      print("💡 Raw transaction map: $txMap");
+    }
+    _transactions = local.map((tx) => TransactionModel.fromMap(tx)).toList();
+    notifyListeners();
+  }
 }

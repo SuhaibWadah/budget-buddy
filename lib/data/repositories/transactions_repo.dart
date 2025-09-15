@@ -30,12 +30,12 @@ class TransactionsRepo {
     }
   }
 
-  Future<List<Map>> readRecentTransactions() =>
+  Future<List<Map<String, dynamic>>> readRecentTransactions() =>
       _runDbOperation('readRecent10transactions', (db) async {
-        return await db.rawQuery('''
+        return await db.rawQuery(''' select
 t.id, t.title, t.note, t.amount, t.date, t.isExpense,
         c.name AS categoryName from transactions t
-    join categories c on t.category_id = c.id
+    join categories c on t.categoryId = c.id
     order by t.date desc
     limit 10
          
@@ -63,37 +63,38 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
       });
 
   Future<int> insertTransaction(Map<String, Object?> values) => _runDbOperation(
-    'insertTransaction',
-    (db) => db.insert('transactions', values),
-  );
+        'insertTransaction',
+        (db) => db.insert('transactions', values),
+      );
 
   Future<int> deleteTransaction(String transactionId) => _runDbOperation(
-    'deleteTransaction',
-    (db) =>
-        db.delete('transactions', where: 'id = ?', whereArgs: [transactionId]),
-  );
+        'deleteTransaction',
+        (db) => db.delete('transactions',
+            where: 'id = ?', whereArgs: [transactionId]),
+      );
 
   Future<int> updateTransaction(
     String transactionId,
     Map<String, Object?> values,
-  ) => _runDbOperation(
-    'updateTransaction',
-    (db) => db.update(
-      'transactions',
-      values,
-      where: 'id = ?',
-      whereArgs: [transactionId],
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    ),
-  );
+  ) =>
+      _runDbOperation(
+        'updateTransaction',
+        (db) => db.update(
+          'transactions',
+          values,
+          where: 'id = ?',
+          whereArgs: [transactionId],
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        ),
+      );
 
   Future<int> markTransactionAsSynced(String transactionId) => _runDbOperation(
-    'markTransactionAsSynced',
-    (db) => db.update(
-      'transactions',
-      {'isSynced': 1},
-      where: 'id: ?',
-      whereArgs: [transactionId],
-    ),
-  );
+        'markTransactionAsSynced',
+        (db) => db.update(
+          'transactions',
+          {'isSynced': 1},
+          where: 'id: ?',
+          whereArgs: [transactionId],
+        ),
+      );
 }
