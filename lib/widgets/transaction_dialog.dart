@@ -16,7 +16,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  DateTime? _selectedDate;
+  DateTime? _selectedDate = DateTime.now();
   bool _isExpense = false;
   int? categoryId;
   bool isLoading = false;
@@ -41,19 +41,23 @@ class _TransactionDialogState extends State<TransactionDialog> {
     }
   }
 
-  void _submit(BuildContext context) {
+  void _submit(BuildContext context) async {
+    debugPrint(
+        '1st ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+
+    final transProvider = context.read<TransactionProvider>();
     if (_formKey.currentState?.validate() != true || _selectedDate == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Please fill in all fields')));
       return;
     }
 
-    final transProvider = context.read<TransactionProvider>();
-
     String formatted =
         "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}";
-
+    debugPrint(
+        '2nd ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
     final transaction = TransactionModel(
       title: _titleController.text.trim(),
       amount: double.parse(_amountController.text.trim()),
@@ -61,12 +65,35 @@ class _TransactionDialogState extends State<TransactionDialog> {
       isExpense: _isExpense,
       categoryId: categoryId!,
     );
-    isLoading = true;
-    transProvider.addTransaction(transaction);
+    setState(() {
+      isLoading = true;
+    });
+    debugPrint(
+        '3rd ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+
+    await transProvider.addTransaction(transaction);
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('Transaction saved')));
-    isLoading = false;
+    debugPrint(
+        '4th ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+
+    setState(() {
+      isLoading = false;
+    });
+    debugPrint(
+        '5th ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+
+    clearFields();
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final catProvider = context.read<CategoryProvider>();
+    catProvider.readCategories();
   }
 
   @override
@@ -79,7 +106,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final _categories = context.read<CategoryProvider>().categories;
+    final categories = context.read<CategoryProvider>().categories;
 
     return Padding(
       padding: EdgeInsets.all(16.0),
@@ -100,7 +127,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
             ),
             Row(
               children: [
-                Text(_selectedDate.toString()),
+                Text(_selectedDate.toString().split(' ')[0]),
                 IconButton(onPressed: _pickDate, icon: Icon(Icons.date_range)),
               ],
             ),
@@ -117,8 +144,8 @@ class _TransactionDialogState extends State<TransactionDialog> {
                 Text('Is Expense'),
               ],
             ),
-
             DropdownButtonFormField<int>(
+              hint: Text('Select a Category'),
               validator: (value) {
                 if (value == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +155,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
                 }
               },
               initialValue: categoryId,
-              items: _categories.map((cat) {
+              items: categories.map((cat) {
                 return DropdownMenuItem<int>(
                   value: cat.id,
                   child: Text(cat.name),
@@ -140,13 +167,23 @@ class _TransactionDialogState extends State<TransactionDialog> {
                 });
               },
             ),
-            ElevatedButton(
-              onPressed: () {
-                _submit(context);
-              },
-              child: isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : Text('Save'),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    isLoading ? null : _submit(context);
+                  },
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Text('Save'),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      debugPrint("Categories: ${categories.length}");
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancel'))
+              ],
             ),
           ],
         ),

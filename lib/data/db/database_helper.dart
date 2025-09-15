@@ -2,15 +2,19 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
+  static final DatabaseHelper instance = DatabaseHelper._internal();
+
+  // Private constructor
+  DatabaseHelper._internal();
+
+  // Factory constructor returns the same instance
+  factory DatabaseHelper() => instance;
+
   static Database? _db;
 
   Future<Database?> get db async {
-    if (_db == null) {
-      _db = await initDb();
-      return _db;
-    } else {
-      return _db;
-    }
+    _db ??= await initDb();
+    return _db;
   }
 
   Future<Database> initDb() async {
@@ -22,6 +26,7 @@ class DatabaseHelper {
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
+    await mydb.execute('PRAGMA foreign_keys = ON;');
     return mydb;
   }
 
@@ -36,7 +41,7 @@ class DatabaseHelper {
       "isExpense" integer not null,
       "isSynced" integer not null,
       "categoryId" integer not null,
-       foreign key (category_id) references categories(id) on delete cascade
+       foreign key (categoryId) references categories(id) on delete cascade
       )
     ''');
 
@@ -44,7 +49,7 @@ class DatabaseHelper {
     create table "categories"(
     "id" integer not null primary key,
     "name" text not null unique,
-    "isSynced" integer not null,
+    "isSynced" integer not null
     )
 ''');
 

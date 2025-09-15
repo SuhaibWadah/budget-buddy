@@ -20,9 +20,11 @@ class CategoryProvider with ChangeNotifier {
 
   Future<void> readCategories() async {
     final local = await _catRepo.readCategories();
+
     _categories = local
         .map((cat) => Category.fromMap(cat as Map<String, dynamic>))
         .toList();
+
     notifyListeners();
   }
 

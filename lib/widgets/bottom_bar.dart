@@ -9,7 +9,8 @@ NavigationBar buildBottomNavBar() {
     },
     destinations: const [
       NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-      NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
+      NavigationDestination(icon: Icon(Icons.category), label: 'Categories'),
+      NavigationDestination(icon: Icon(Icons.analytics), label: 'Statistics'),
       NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
     ],
   );

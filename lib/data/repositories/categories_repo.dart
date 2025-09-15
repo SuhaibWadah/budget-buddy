@@ -21,37 +21,42 @@ class CategoriesRepo {
     Future<T> Function(Database db) operation,
   ) async {
     try {
-      final db = await _getDbOrThrow();
-      return await operation(db);
-    } catch (e, stackTrace) {
+      final db = await DatabaseHelper.instance.db; // singleton DB
+      if (db == null) {
+        throw Exception('Database not initialized');
+      }
+      debugPrint('Inside the op');
+      final result = await operation(db);
+      return result;
+    } catch (e) {
       debugPrint('$label failed: $e');
-      debugPrint('Stack trace: $stackTrace');
       throw Exception('Database operation "$label" failed');
     }
   }
 
   Future<List<Map>> readCategories() => _runDbOperation(
-    'readCategories',
-    (db) => db.query('categories', columns: ['name']),
-  );
+        'readCategories',
+        (db) => db.query('categories'),
+      );
 
   Future<int> insertCategory(Map<String, Object?> values) => _runDbOperation(
-    'insertCategory',
-    (db) => db.insert('categories', values),
-  );
+        'insertCategory',
+        (db) => db.insert('categories', values),
+      );
 
   Future<int> deleteCategory(int categoryId) => _runDbOperation(
-    'deleteCategory',
-    (db) => db.delete('categories', where: 'id = ?', whereArgs: [categoryId]),
-  );
+        'deleteCategory',
+        (db) =>
+            db.delete('categories', where: 'id = ?', whereArgs: [categoryId]),
+      );
 
   Future<int> markCategoryAsSynced(int? categoryId) => _runDbOperation(
-    'markAsSynced',
-    (db) => db.update(
-      'categories',
-      {'isSynced': 1},
-      where: 'id = ?',
-      whereArgs: [categoryId],
-    ),
-  );
+        'markAsSynced',
+        (db) => db.update(
+          'categories',
+          {'isSynced': 1},
+          where: 'id = ?',
+          whereArgs: [categoryId],
+        ),
+      );
 }

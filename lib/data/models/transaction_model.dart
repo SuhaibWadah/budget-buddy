@@ -29,7 +29,7 @@ class TransactionModel {
       'title': title,
       'note': note,
       'amount': amount,
-      'date': date, // save as string
+      'date': date,
       'isExpense': isExpense ? 1 : 0,
       'isSynced': isSynced ? 1 : 0,
       'categoryId': categoryId,
@@ -55,7 +55,7 @@ class TransactionModel {
       id: map['id'],
       title: map['title'],
       note: map['note'],
-      amount: (map['amount'] as num).toDouble(),
+      amount: map['amount'],
       date: map['date'], // store date as ISO string in SQLite
       isExpense: map['isExpense'] == 1,
       isSynced: map['isSynced'] == 1,

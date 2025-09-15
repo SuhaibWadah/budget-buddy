@@ -21,11 +21,11 @@ class TransactionProvider with ChangeNotifier {
   List<TransactionModel> _transactions = [];
   List<TransactionModel> get transactions => _transactions;
 
-  TransactionProvider(this._authProvider, this._transRepo, this._transService);
+  TransactionProvider(this._transRepo, this._transService);
 
   Future<void> addTransaction(TransactionModel trans) async {
-    final id = await _transRepo.insertTransaction(trans.toMap());
-    trans.id = id as String;
+    await _transRepo.insertTransaction(trans.toMap());
+
     _transactions.add(trans);
     notifyListeners();
 
@@ -60,9 +60,8 @@ class TransactionProvider with ChangeNotifier {
 
   Future<void> readTransactions() async {
     final local = await _transRepo.readTransactions();
-    _transactions = local
-        .map((trans) => TransactionModel.fromMap(trans))
-        .toList();
+    _transactions =
+        local.map((trans) => TransactionModel.fromMap(trans)).toList();
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {
