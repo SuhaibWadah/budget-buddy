@@ -46,9 +46,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Divider(),
-              Expanded(
-                child: RecentTransactionsList(names: ['suhaib', 'skdfjsa']),
-              ),
+              Expanded(child: RecentTransactionsList(transactions: [])),
             ],
           ),
         ),

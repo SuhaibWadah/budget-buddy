@@ -30,7 +30,7 @@ class CategoriesRepo {
     }
   }
 
-  Future<List<Map>> readCategories(String query) => _runDbOperation(
+  Future<List<Map>> readCategories() => _runDbOperation(
     'readCategories',
     (db) => db.query('categories', columns: ['name']),
   );
@@ -45,7 +45,7 @@ class CategoriesRepo {
     (db) => db.delete('categories', where: 'id = ?', whereArgs: [categoryId]),
   );
 
-  Future<int> markCategoryAsSynced(int categoryId) => _runDbOperation(
+  Future<int> markCategoryAsSynced(int? categoryId) => _runDbOperation(
     'markAsSynced',
     (db) => db.update(
       'categories',

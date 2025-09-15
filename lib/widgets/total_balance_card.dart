@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TotalBalanceCard extends StatefulWidget {
   const TotalBalanceCard({super.key, required this.isExpense});
-  final isExpense;
+  final bool isExpense;
 
   @override
   _TotalBalanceCardState createState() => _TotalBalanceCardState();

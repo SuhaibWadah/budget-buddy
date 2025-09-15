@@ -19,5 +19,29 @@ class CategoryProvider with ChangeNotifier {
     _categories = local
         .map((cat) => Category.fromMap(cat as Map<String, dynamic>))
         .toList();
+    notifyListeners();
+  }
+
+  Future<void> addCategory(Category cat) async {
+    final id = await _catRepo.insertCategory(cat.toMap());
+    cat.id = id;
+    categories.add(cat);
+    notifyListeners();
+    // Syncing with firebase if user is logged in
+    if (_authProvider.isLoggedIn) {
+      await _catServie.addCategory(_authProvider.user!.uid as int, cat);
+      cat.isSynced = true;
+      _catRepo.markCategoryAsSynced(cat.id);
+    }
+  }
+
+  Future<void> deleteCategory(int id) async {
+    _catRepo.deleteCategory(id);
+    categories.removeWhere((cat) => cat.id == id);
+    notifyListeners();
+
+    if (_authProvider.isLoggedIn) {
+      await _catServie.deleteCategory(_authProvider.user!.uid as int, id);
+    }
   }
 }

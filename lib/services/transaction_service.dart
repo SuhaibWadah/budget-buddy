@@ -9,7 +9,7 @@ class TransactionService {
       .doc(user?.uid);
   final String _collection = 'transactions';
 
-  Future<void> addTransaction(int? uid, TransactionModel tx) async {
+  Future<void> addTransaction(String? uid, TransactionModel tx) async {
     await userDb
         .collection('users')
         .doc(uid.toString())
@@ -18,7 +18,7 @@ class TransactionService {
         .set(tx.toFirestore());
   }
 
-  Future<void> updateTransaction(int? uid, TransactionModel tx) async {
+  Future<void> updateTransaction(String? uid, TransactionModel tx) async {
     await userDb
         .collection('users')
         .doc(uid.toString())
@@ -27,7 +27,7 @@ class TransactionService {
         .update(tx.toFirestore());
   }
 
-  Future<void> deleteTransaction(int? uid, String id) async {
+  Future<void> deleteTransaction(String? uid, String id) async {
     await userDb
         .collection('users')
         .doc(uid.toString())
@@ -36,7 +36,7 @@ class TransactionService {
         .delete();
   }
 
-  Future<List<TransactionModel>> readTransactions(int? uid) async {
+  Future<List<TransactionModel>> readTransactions(String? uid) async {
     final query = await userDb
         .collection('users')
         .doc(uid.toString())

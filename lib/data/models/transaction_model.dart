@@ -1,15 +1,19 @@
-class Transaction {
-  final String id;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/v4.dart';
+
+class TransactionModel {
+  String id;
   final String title;
   final String? note;
   final double amount;
-  final DateTime date;
+  final String date;
   final bool isExpense;
-  final bool isSynced;
+  bool isSynced;
   final int categoryId;
 
-  Transaction({
-    required this.id,
+  TransactionModel({
+    String? id,
     required this.title,
     this.note,
     required this.amount,
@@ -17,30 +21,58 @@ class Transaction {
     required this.isExpense,
     this.isSynced = false,
     required this.categoryId,
-  });
+  }) : id = id ?? const Uuid().v4();
 
-  Map<String, dynamic> toFirebase(Transaction trans) {
+  Map<String, dynamic> toMap() {
     return {
-      'id': trans.id,
-      'title': trans.title,
-      'note': trans.note,
-      'amount': trans.amount,
-      'date': trans.date,
-      'isExpense': trans.isExpense ? 1 : 0,
-      'isSynced': trans.isSynced ? 1 : 0,
-      'categoryId': trans.categoryId,
+      'id': id,
+      'title': title,
+      'note': note,
+      'amount': amount,
+      'date': date, // save as string
+      'isExpense': isExpense ? 1 : 0,
+      'isSynced': isSynced ? 1 : 0,
+      'categoryId': categoryId,
     };
   }
 
-  factory Transaction.fromMap(Map<String, dynamic> map) {
-    return Transaction(
+  /// For Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'title': title,
+      'note': note,
+      'amount': amount,
+      'date': date, // Firestore can store DateTime directly
+      'isExpense': isExpense,
+      'isSynced': isSynced,
+      'categoryId': categoryId,
+    };
+  }
+
+  factory TransactionModel.fromMap(Map<String, dynamic> map) {
+    return TransactionModel(
       id: map['id'],
       title: map['title'],
       note: map['note'],
-      amount: map['amount'],
-      date: map['date'],
+      amount: (map['amount'] as num).toDouble(),
+      date: map['date'], // store date as ISO string in SQLite
       isExpense: map['isExpense'] == 1,
       isSynced: map['isSynced'] == 1,
+      categoryId: map['categoryId'],
+    );
+  }
+
+  /// For Firestore
+  factory TransactionModel.fromFirestore(Map<String, dynamic> map) {
+    return TransactionModel(
+      id: map['id'],
+      title: map['title'],
+      note: map['note'],
+      amount: (map['amount'] as num).toDouble(),
+      date: map['date'], // Firestore Timestamp → DateTime
+      isExpense: map['isExpense'] as bool,
+      isSynced: map['isSynced'] as bool,
       categoryId: map['categoryId'],
     );
   }

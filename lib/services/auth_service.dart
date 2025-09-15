@@ -29,12 +29,13 @@ class AuthService {
     }
   }
 
-  Future<void> register(String email, String password) async {
+  Future<User?> register(String email, String password) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
+      final credentials = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      return credentials.user;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'email-already-in-use':
