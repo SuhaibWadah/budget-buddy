@@ -4,9 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class TransactionService {
   final user = FirebaseAuth.instance.currentUser;
-  late final userDb = FirebaseFirestore.instance
-      .collection('users')
-      .doc(user?.uid);
+  late final userDb =
+      FirebaseFirestore.instance.collection('users').doc(user?.uid);
   final String _collection = 'transactions';
 
   Future<void> addTransaction(String? uid, TransactionModel tx) async {
@@ -25,6 +24,19 @@ class TransactionService {
         .collection(_collection)
         .doc(tx.id)
         .update(tx.toFirestore());
+  }
+
+  Future<void> deleteAllTransactions(String? uid) async {
+    final userCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection(_collection);
+
+    final snapshot = await userCollection.get();
+
+    for (final doc in snapshot.docs) {
+      await doc.reference.delete();
+    }
   }
 
   Future<void> deleteTransaction(String? uid, String id) async {

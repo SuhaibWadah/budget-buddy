@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uuid/v4.dart';
 
 class TransactionModel {
   String id;
   final String title;
   final String? note;
   final double amount;
-  final String date;
+  final DateTime date;
   final bool isExpense;
   bool isSynced;
   final int categoryId;
@@ -29,7 +28,7 @@ class TransactionModel {
       'title': title,
       'note': note ?? '',
       'amount': amount,
-      'date': date,
+      'date': date.millisecondsSinceEpoch,
       'isExpense': isExpense ? 1 : 0,
       'isSynced': isSynced ? 1 : 0,
       'categoryId': categoryId,
@@ -43,7 +42,7 @@ class TransactionModel {
       'title': title,
       'note': note ?? '',
       'amount': amount,
-      'date': date, // Firestore can store DateTime directly
+      'date': Timestamp.fromDate(date), // Firestore can store DateTime directly
       'isExpense': isExpense,
       'isSynced': isSynced,
       'categoryId': categoryId,
@@ -51,15 +50,30 @@ class TransactionModel {
   }
 
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
+    final rawDate = map['date'];
+
+    DateTime parsedDate;
+
+    if (rawDate is int) {
+      // ✅ Already stored as timestamp
+      parsedDate = DateTime.fromMillisecondsSinceEpoch(rawDate);
+    } else if (rawDate is String) {
+      // ✅ Old string format (e.g., "2025-09-16")
+      parsedDate = DateTime.tryParse(rawDate) ?? DateTime.now();
+    } else {
+      // fallback
+      parsedDate = DateTime.now();
+    }
+    print("${map['title']} ${map['categoryId']}");
     return TransactionModel(
       id: map['id'],
       title: map['title'],
       note: map['note'],
-      amount: map['amount'],
-      date: map['date'],
+      amount: (map['amount'] as num).toDouble(),
+      date: parsedDate,
       isExpense: (map['isExpense'] ?? 0) == 1,
       isSynced: (map['isSynced'] ?? 0) == 1,
-      categoryId: (map['categoryId'] ?? 0) as int,
+      categoryId: (map['categoryId']) as int,
     );
   }
 
@@ -70,7 +84,8 @@ class TransactionModel {
       title: map['title'],
       note: map['note'],
       amount: (map['amount'] as num).toDouble(),
-      date: map['date'], // Firestore Timestamp → DateTime
+      date:
+          (map['date'] as Timestamp).toDate(), // Firestore Timestamp → DateTime
       isExpense: map['isExpense'] as bool,
       isSynced: map['isSynced'] as bool,
       categoryId: map['categoryId'],

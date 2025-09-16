@@ -33,7 +33,7 @@ class TransactionsRepo {
   Future<List<Map<String, dynamic>>> readRecentTransactions() =>
       _runDbOperation('readRecent10transactions', (db) async {
         return await db.rawQuery(''' select
-t.id, t.title, t.note, t.amount, t.date, t.isExpense,
+t.id, t.title, t.note, t.amount, t.date, t.isExpense, t.categoryId,
         c.name AS categoryName from transactions t
     join categories c on t.categoryId = c.id
     order by t.date desc
@@ -47,9 +47,9 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
         // Base query
         String sql = '''
     select t.id, t.title, t.note, t.amount, t.date, t.isExpense,
-           t.isSynced, c.id AS categoryId, c.name AS categoryName
+           t.isSynced, t.categoryId, c.id, c.name AS categoryName
     from transactions t
-    join categories c ON t.category_id = c.id
+    join categories c ON t.categoryId = c.id
   ''';
 
         // Add filter if categoryId is provided
@@ -72,6 +72,8 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
         (db) => db.delete('transactions',
             where: 'id = ?', whereArgs: [transactionId]),
       );
+  Future<int> deleteAllTransactions() => _runDbOperation(
+      'deleteAllTransactions', (db) => db.delete('transactions'));
 
   Future<int> updateTransaction(
     String transactionId,
@@ -84,7 +86,7 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense,
           values,
           where: 'id = ?',
           whereArgs: [transactionId],
-          conflictAlgorithm: ConflictAlgorithm.replace,
+          // conflictAlgorithm: ConflictAlgorithm.replace,
         ),
       );
 

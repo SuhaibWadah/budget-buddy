@@ -21,12 +21,20 @@ class TransactionProvider with ChangeNotifier {
   List<TransactionModel> _transactions = [];
   List<TransactionModel> get transactions => _transactions;
 
+  List<TransactionModel> _recentTransactions = [];
+  List<TransactionModel> get recentTransactions => _recentTransactions;
+
   TransactionProvider(this._transRepo, this._transService);
 
   Future<void> addTransaction(TransactionModel trans) async {
     await _transRepo.insertTransaction(trans.toMap());
 
     _transactions.add(trans);
+    if (_recentTransactions.length == 10) {
+      _recentTransactions.removeAt(0);
+    }
+    _recentTransactions.add(trans);
+    readRecentTransactions();
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {
@@ -38,8 +46,12 @@ class TransactionProvider with ChangeNotifier {
 
   Future<void> updateTransaction(TransactionModel trans) async {
     await _transRepo.updateTransaction(trans.id, trans.toMap());
+
     final index = _transactions.indexWhere((t) => t.id == trans.id);
     if (index != -1) _transactions[index] = trans;
+    notifyListeners();
+    final index2 = _recentTransactions.indexWhere((t) => t.id == trans.id);
+    if (index != -1) _recentTransactions[index2] = trans;
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {
@@ -49,9 +61,23 @@ class TransactionProvider with ChangeNotifier {
     }
   }
 
+  Future<void> deleteAllTransactions() async {
+    print('Not Deleted !!!!!!!!!!!!!!!!!!!!111');
+    await _transRepo.deleteAllTransactions();
+    print('Deleted !!!!!!!!!!!!!!!11');
+    _transactions.clear();
+    _recentTransactions.clear();
+    notifyListeners();
+
+    if (_authProvider!.isLoggedIn) {
+      await _transService.deleteAllTransactions(await _getUid());
+    }
+  }
+
   Future<void> deleteTransaction(String id) async {
     await _transRepo.deleteTransaction(id);
     _transactions.removeWhere((t) => t.id == id);
+    _recentTransactions.removeWhere((t) => t.id == id);
     notifyListeners();
     if (_authProvider!.isLoggedIn) {
       await _transService.deleteTransaction(await _getUid(), id);
@@ -62,6 +88,7 @@ class TransactionProvider with ChangeNotifier {
     final local = await _transRepo.readTransactions();
     _transactions =
         local.map((trans) => TransactionModel.fromMap(trans)).toList();
+
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {
@@ -78,10 +105,10 @@ class TransactionProvider with ChangeNotifier {
 
   Future<void> readRecentTransactions() async {
     final local = await _transRepo.readRecentTransactions();
-    for (var txMap in local) {
-      print("💡 Raw transaction map: $txMap");
-    }
-    _transactions = local.map((tx) => TransactionModel.fromMap(tx)).toList();
+
+    _recentTransactions =
+        local.map((tx) => TransactionModel.fromMap(tx)).toList();
+
     notifyListeners();
   }
 }

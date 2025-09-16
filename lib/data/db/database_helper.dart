@@ -70,5 +70,49 @@ class DatabaseHelper {
     ''');
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {}
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.transaction((txn) async {
+        await txn.execute('PRAGMA foreign_keys=OFF;');
+        await txn
+            .execute('ALTER TABLE transactions RENAME TO transactions_old;');
+
+        await txn.execute('''
+    CREATE TABLE transactions (
+      id TEXT NOT NULL PRIMARY KEY,
+      title TEXT NOT NULL,
+      note TEXT,
+      date INTEGER NOT NULL,
+      amount REAL NOT NULL,
+      isExpense INTEGER NOT NULL,
+      isSynced INTEGER NOT NULL,
+      categoryId INTEGER NOT NULL,
+      FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE CASCADE
+    )
+  ''');
+
+        final oldData = await txn.query('transactions_old');
+        final batch = txn.batch();
+        for (var row in oldData) {
+          final parsedDate = DateTime.tryParse(row['date'] as String);
+          final timestamp = parsedDate?.millisecondsSinceEpoch ?? 0;
+          batch.insert('transactions', {
+            'id': row['id'],
+            'title': row['title'],
+            'note': row['note'],
+            'date': timestamp,
+            'amount': row['amount'],
+            'isExpense': row['isExpense'],
+            'isSynced': row['isSynced'],
+            'categoryId': row['categoryId'],
+          });
+        }
+        await batch.commit(noResult: true);
+
+        await txn.execute('DROP TABLE transactions_old;');
+        await txn.execute('PRAGMA foreign_keys=ON;');
+      });
+    }
+    print('upgraded!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
+  }
 }

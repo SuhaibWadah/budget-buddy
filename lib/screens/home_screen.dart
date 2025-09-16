@@ -21,16 +21,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<TransactionModel> _transactions = [];
 
+  @override
   void initState() {
     super.initState();
     // Load transactions once the widget is ready
     Future.microtask(() async {
       if (mounted) {
-        final data =
-            await Provider.of<TransactionProvider>(context, listen: false)
-                .readRecentTransactions();
-      } else {
-        print('skldfjklasjdf');
+        await Provider.of<TransactionProvider>(context, listen: false)
+            .readRecentTransactions();
       }
     });
   }
@@ -38,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TransactionProvider>(context);
+    _transactions = provider.recentTransactions;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -46,10 +45,10 @@ class _HomePageState extends State<HomePage> {
               barrierDismissible: true,
               builder: (_) {
                 return AlertDialog(
+                  scrollable: true,
                   actions: [],
                   title: const Text('New Transaction'),
-                  content: SizedBox(
-                    width: double.maxFinite,
+                  content: IntrinsicHeight(
                     child: TransactionDialog(),
                   ),
                 );
@@ -78,7 +77,7 @@ class _HomePageState extends State<HomePage> {
               Divider(),
               Expanded(
                   child: RecentTransactionsList(
-                      transactions: provider.transactions)),
+                      transactions: provider.recentTransactions)),
             ],
           ),
         ),

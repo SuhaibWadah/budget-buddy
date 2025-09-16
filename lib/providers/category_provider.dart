@@ -24,7 +24,6 @@ class CategoryProvider with ChangeNotifier {
     _categories = local
         .map((cat) => Category.fromMap(cat as Map<String, dynamic>))
         .toList();
-
     notifyListeners();
   }
 

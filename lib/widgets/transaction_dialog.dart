@@ -5,7 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TransactionDialog extends StatefulWidget {
-  TransactionDialog({super.key});
+  TransactionDialog(
+      {super.key,
+      this.title,
+      this.note,
+      this.amount,
+      this.date,
+      this.isExpense,
+      this.categoryId});
+  String? title;
+  String? note;
+  double? amount;
+  DateTime? date;
+  bool? isExpense;
+  int? categoryId;
 
   @override
   _TransactionDialogState createState() => _TransactionDialogState();
@@ -13,13 +26,32 @@ class TransactionDialog extends StatefulWidget {
 
 class _TransactionDialogState extends State<TransactionDialog> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _noteController = TextEditingController();
+  TextEditingController _amountController = TextEditingController();
   DateTime? _selectedDate = DateTime.now();
-  bool _isExpense = false;
-  int? categoryId;
+  bool? _isExpense;
+  int? _categoryId;
   bool isLoading = false;
+  bool? isUpdate;
+
+  @override
+  void initState() {
+    super.initState();
+    final catProvider = context.read<CategoryProvider>();
+    catProvider.readCategories();
+    _titleController.text = widget.title ?? '';
+    _amountController.text = widget.amount?.toString() ?? '';
+    _noteController.text = widget.note ?? '';
+    _selectedDate = widget.date ?? DateTime.now();
+    _isExpense = widget.isExpense ?? false;
+    if (mounted && widget.categoryId != null) {
+      _categoryId = widget.categoryId;
+    }
+    isUpdate = widget.title != null;
+    print(
+        "${isUpdate} ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp");
+  }
 
   void clearFields() {
     _titleController.clear();
@@ -41,42 +73,36 @@ class _TransactionDialogState extends State<TransactionDialog> {
     }
   }
 
-  void _submit(BuildContext context) async {
+  void _submit(BuildContext context, bool? isUpdate) async {
     final transProvider = context.read<TransactionProvider>();
     if (_formKey.currentState?.validate() != true || _selectedDate == null) {
       return;
     }
 
-    String formatted =
-        "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}";
     final transaction = TransactionModel(
       title: _titleController.text.trim(),
       amount: double.parse(_amountController.text.trim()),
-      date: formatted,
-      isExpense: _isExpense,
-      categoryId: categoryId!,
+      date: _selectedDate!,
+      isExpense: _isExpense!,
+      categoryId: _categoryId!,
     );
     setState(() {
       isLoading = true;
     });
-    await transProvider.addTransaction(transaction);
+    isUpdate!
+        ? await transProvider.updateTransaction(transaction)
+        : await transProvider.addTransaction(transaction);
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('Transaction saved')));
+    ).showSnackBar(SnackBar(
+        content: Text(isUpdate ? 'Transaction Updated' : 'Transaction Saved')));
 
     setState(() {
       isLoading = false;
     });
     clearFields();
     Navigator.of(context).pop();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final catProvider = context.read<CategoryProvider>();
-    catProvider.readCategories();
   }
 
   @override
@@ -89,13 +115,14 @@ class _TransactionDialogState extends State<TransactionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = context.read<CategoryProvider>().categories;
+    final categories = context.watch<CategoryProvider>().categories;
 
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Form(
         key: _formKey,
         child: Column(
+          spacing: 5,
           children: [
             _getFormField(title: 'Title', controller: _titleController),
             _getFormField(
@@ -127,7 +154,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
                 Text('Is Expense'),
               ],
             ),
-            DropdownButtonFormField<int>(
+            DropdownButtonFormField<int?>(
               hint: Text('Select a Category'),
               validator: (value) {
                 if (value == null) {
@@ -135,7 +162,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
                 }
                 return null;
               },
-              initialValue: categoryId,
+              initialValue: _categoryId,
               items: categories.map((cat) {
                 return DropdownMenuItem<int>(
                   value: cat.id,
@@ -144,23 +171,32 @@ class _TransactionDialogState extends State<TransactionDialog> {
               }).toList(),
               onChanged: (int? value) {
                 setState(() {
-                  categoryId = value;
+                  _categoryId = value;
                 });
               },
             ),
+            const SizedBox(
+              height: 5,
+            ),
             Row(
+              spacing: 50,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    isLoading ? null : _submit(context);
+                    isLoading
+                        ? null
+                        : isUpdate!
+                            ? _submit(context, isUpdate)
+                            : _submit(context, isUpdate);
                   },
                   child: isLoading
                       ? Center(child: CircularProgressIndicator())
-                      : Text('Save'),
+                      : isUpdate!
+                          ? Text('Update')
+                          : Text('Save'),
                 ),
-                ElevatedButton(
+                TextButton(
                     onPressed: () {
-                      debugPrint("Categories: ${categories.length}");
                       Navigator.of(context).pop();
                     },
                     child: Text('Cancel'))
@@ -191,6 +227,7 @@ TextFormField _getFormField({
       } else {
         return null;
       }
+      return null;
     },
   );
 }
