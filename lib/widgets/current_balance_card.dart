@@ -1,4 +1,6 @@
+import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CurrentBalanceCard extends StatefulWidget {
   const CurrentBalanceCard({super.key});
@@ -10,6 +12,10 @@ class CurrentBalanceCard extends StatefulWidget {
 class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<TransactionProvider>();
+    final currentBalance =
+        provider.totalAmount(isExpense: false, period: Period.day) -
+            provider.totalAmount(isExpense: true, period: Period.day);
     return Container(
       width: double.infinity,
       height: 120,
@@ -39,14 +45,19 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '\$100000',
+                  '${currentBalance}',
                   style: TextStyle(
-                    color: Colors.green,
+                    color: currentBalance > 0 ? Colors.green : Colors.red,
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(Icons.trending_up, color: Colors.green[600], size: 50),
+                Icon(
+                    currentBalance > 0
+                        ? Icons.trending_up
+                        : Icons.trending_down,
+                    color: currentBalance > 0 ? Colors.green[600] : Colors.red,
+                    size: 50),
               ],
             ),
           ],

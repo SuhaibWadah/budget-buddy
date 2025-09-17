@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 class TransactionDetails extends StatefulWidget {
   const TransactionDetails(
       {super.key,
+      this.id,
       required this.title,
       this.note,
       required this.amount,
       required this.date,
       required this.isExpense,
       required this.categoryId});
+  final String? id;
   final String title;
   final String? note;
   final double amount;
@@ -32,6 +34,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
           child: Column(
             children: [
               TransactionDialog(
+                  id: widget.id,
                   title: widget.title,
                   note: widget.note,
                   amount: widget.amount,

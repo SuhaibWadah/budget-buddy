@@ -7,12 +7,14 @@ import 'package:provider/provider.dart';
 class TransactionDialog extends StatefulWidget {
   TransactionDialog(
       {super.key,
+      this.id,
       this.title,
       this.note,
       this.amount,
       this.date,
       this.isExpense,
       this.categoryId});
+  String? id;
   String? title;
   String? note;
   double? amount;
@@ -26,9 +28,9 @@ class TransactionDialog extends StatefulWidget {
 
 class _TransactionDialogState extends State<TransactionDialog> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _noteController = TextEditingController();
-  TextEditingController _amountController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
   DateTime? _selectedDate = DateTime.now();
   bool? _isExpense;
   int? _categoryId;
@@ -49,8 +51,6 @@ class _TransactionDialogState extends State<TransactionDialog> {
       _categoryId = widget.categoryId;
     }
     isUpdate = widget.title != null;
-    print(
-        "${isUpdate} ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp");
   }
 
   void clearFields() {
@@ -80,6 +80,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
     }
 
     final transaction = TransactionModel(
+      id: widget.id,
       title: _titleController.text.trim(),
       amount: double.parse(_amountController.text.trim()),
       date: _selectedDate!,

@@ -6,7 +6,7 @@ class Category {
   Category({this.id, required this.name, this.isSynced = false});
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'isSynced': isSynced ? 1 : 0};
+    return {'name': name, 'isSynced': isSynced ? 1 : 0};
   }
 
   factory Category.fromMap(Map<String, dynamic> map) {

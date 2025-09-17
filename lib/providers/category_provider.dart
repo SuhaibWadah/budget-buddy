@@ -32,7 +32,7 @@ class CategoryProvider with ChangeNotifier {
     cat.id = id;
     categories.add(cat);
     notifyListeners();
-    // Syncing with firebase if user is logged in
+
     if (_authProvider!.isLoggedIn) {
       await _catServie.addCategory(_authProvider!.user!.uid as int, cat);
       cat.isSynced = true;

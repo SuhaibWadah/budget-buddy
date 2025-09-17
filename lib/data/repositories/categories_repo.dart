@@ -10,11 +10,11 @@ class CategoriesRepo {
     _dbHelper = dbHelper.db;
   }
 
-  Future<Database> _getDbOrThrow() async {
-    final db = await _dbHelper;
-    if (db == null) throw Exception("Database is not initialized.");
-    return db;
-  }
+  // Future<Database> _getDbOrThrow() async {
+  //   final db = await _dbHelper;
+  //   if (db == null) throw Exception("Database is not initialized.");
+  //   return db;
+  // }
 
   Future<T> _runDbOperation<T>(
     String label,
@@ -41,7 +41,8 @@ class CategoriesRepo {
 
   Future<int> insertCategory(Map<String, Object?> values) => _runDbOperation(
         'insertCategory',
-        (db) => db.insert('categories', values),
+        (db) => db.insert('categories', values,
+            conflictAlgorithm: ConflictAlgorithm.replace),
       );
 
   Future<int> deleteCategory(int categoryId) => _runDbOperation(

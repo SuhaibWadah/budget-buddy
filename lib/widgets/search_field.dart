@@ -14,9 +14,8 @@ class _SearchFieldState extends State<SearchField> {
     return TextField(
       controller: _searchFiled,
       decoration: InputDecoration(
-        hint: Text('Search transactions...'),
+        labelText: 'Search Transactions',
         prefixIcon: Icon(Icons.search),
-        //focusedBorder: OutlineInputBorder()
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black),
           borderRadius: BorderRadius.all(Radius.circular(16)),

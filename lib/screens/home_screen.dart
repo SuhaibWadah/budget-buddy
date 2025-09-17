@@ -1,6 +1,7 @@
-import 'package:expense_tracker/data/db/database_helper.dart';
 import 'package:expense_tracker/data/models/transaction_model.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
+import 'package:expense_tracker/screens/categories_screen.dart';
+import 'package:expense_tracker/screens/main_screen.dart';
 import 'package:expense_tracker/widgets/app_bar.dart';
 import 'package:expense_tracker/widgets/bottom_bar.dart';
 import 'package:expense_tracker/widgets/current_balance_card.dart';
@@ -19,7 +20,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<TransactionModel> _transactions = [];
+  final List<TransactionModel> _transactions = [];
+  int _selectedIndex = 0;
+  final List<Widget> _pages = [
+    MainPage(),
+    Categories(),
+  ];
 
   @override
   void initState() {
@@ -35,8 +41,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<TransactionProvider>(context);
-    _transactions = provider.recentTransactions;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -57,32 +61,15 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Icons.add),
       ),
       appBar: buildAppBar(),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Column(
-            spacing: 16,
-            children: [
-              CurrentBalanceCard(),
-              Row(
-                spacing: 16,
-                children: [
-                  Expanded(child: TotalBalanceCard(isExpense: true)),
-                  Expanded(child: TotalBalanceCard(isExpense: false)),
-                ],
-              ),
-              SizedBox(height: 8),
-              SearchField(),
-              Text('Recent Transactions'),
-              Divider(),
-              Expanded(
-                  child: RecentTransactionsList(
-                      transactions: provider.recentTransactions)),
-            ],
-          ),
-        ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _selectedIndex,
+        onItemSelected: (newIndex) {
+          setState(() {
+            _selectedIndex = newIndex;
+          });
+        },
       ),
-      bottomNavigationBar: buildBottomNavBar(),
     );
   }
 }

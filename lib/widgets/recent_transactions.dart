@@ -41,7 +41,7 @@ class _RecentTransactionsListState extends State<RecentTransactionsList> {
               ),
               IconButton(
                   onPressed: () {
-                    provider.deleteAllTransactions();
+                    provider.deleteTransaction(trans.id);
                   },
                   icon: Icon(Icons.delete, color: Colors.red[700])),
             ],
@@ -57,6 +57,7 @@ class _RecentTransactionsListState extends State<RecentTransactionsList> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => TransactionDetails(
+                        id: trans.id,
                         title: trans.title,
                         note: trans.note,
                         amount: trans.amount,

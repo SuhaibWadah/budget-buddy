@@ -80,16 +80,14 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense, t.categoryId,
     Map<String, Object?> values,
   ) =>
       _runDbOperation(
-        'updateTransaction',
-        (db) => db.update(
-          'transactions',
-          values,
-          where: 'id = ?',
-          whereArgs: [transactionId],
-          // conflictAlgorithm: ConflictAlgorithm.replace,
-        ),
-      );
-
+          'updateTransaction',
+          (db) => db.update(
+                'transactions',
+                values,
+                where: 'id = ?',
+                whereArgs: [transactionId],
+                // conflictAlgorithm: ConflictAlgorithm.replace,
+              ));
   Future<int> markTransactionAsSynced(String transactionId) => _runDbOperation(
         'markTransactionAsSynced',
         (db) => db.update(

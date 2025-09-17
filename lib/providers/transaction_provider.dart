@@ -4,6 +4,8 @@ import 'package:expense_tracker/providers/auth_provider.dart';
 import 'package:expense_tracker/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 
+enum Period { day, week, month, year }
+
 class TransactionProvider with ChangeNotifier {
   AuthProvider? _authProvider;
   final TransactionsRepo _transRepo;
@@ -46,14 +48,14 @@ class TransactionProvider with ChangeNotifier {
 
   Future<void> updateTransaction(TransactionModel trans) async {
     await _transRepo.updateTransaction(trans.id, trans.toMap());
-
+    print('Updated .....................................');
     final index = _transactions.indexWhere((t) => t.id == trans.id);
     if (index != -1) _transactions[index] = trans;
     notifyListeners();
     final index2 = _recentTransactions.indexWhere((t) => t.id == trans.id);
-    if (index != -1) _recentTransactions[index2] = trans;
+    if (index2 != -1) _recentTransactions[index2] = trans;
     notifyListeners();
-
+    print('Fully updated ................................');
     if (_authProvider!.isLoggedIn) {
       await _transService.updateTransaction(trans.id, trans);
       trans.isSynced = true;
@@ -110,5 +112,34 @@ class TransactionProvider with ChangeNotifier {
         local.map((tx) => TransactionModel.fromMap(tx)).toList();
 
     notifyListeners();
+  }
+
+  double totalAmount({required bool isExpense, Period period = Period.day}) {
+    final now = DateTime.now();
+
+    DateTime start;
+
+    switch (period) {
+      case Period.day:
+        start = DateTime(now.year, now.month, now.day);
+        break;
+      case Period.week:
+        start = DateTime(now.year, now.month, now.day)
+            .subtract(Duration(days: now.weekday - 1)); // start of week (Mon)
+        break;
+      case Period.month:
+        start = DateTime(now.year, now.month, 1); // first day of month
+        break;
+      case Period.year:
+        start = DateTime(now.year, 1, 1); // first day of year
+        break;
+    }
+
+    return _transactions
+        .where((t) =>
+            t.isExpense == isExpense &&
+            t.date.isAfter(
+                start.subtract(const Duration(seconds: 1)))) // include start
+        .fold(0.0, (sum, t) => sum + t.amount);
   }
 }
