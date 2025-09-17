@@ -64,9 +64,8 @@ class TransactionProvider with ChangeNotifier {
   }
 
   Future<void> deleteAllTransactions() async {
-    print('Not Deleted !!!!!!!!!!!!!!!!!!!!111');
     await _transRepo.deleteAllTransactions();
-    print('Deleted !!!!!!!!!!!!!!!11');
+
     _transactions.clear();
     _recentTransactions.clear();
     notifyListeners();
