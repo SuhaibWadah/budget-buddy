@@ -11,8 +11,15 @@ class CurrentBalanceCard extends StatefulWidget {
 
 class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
   @override
+  void initState() {
+    super.initState();
+    final tProvider = context.read<TransactionProvider>();
+    tProvider.readTransactions(); // async, updates provider
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final provider = context.read<TransactionProvider>();
+    final provider = context.watch<TransactionProvider>();
     final currentBalance =
         provider.totalAmount(isExpense: false, period: Period.day) -
             provider.totalAmount(isExpense: true, period: Period.day);
@@ -20,7 +27,7 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
       width: double.infinity,
       height: 120,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 249, 248, 248),
+        color: const Color.fromARGB(255, 247, 250, 247),
         borderRadius: BorderRadius.all(Radius.circular(20)),
         boxShadow: [
           BoxShadow(
@@ -39,7 +46,9 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
           children: [
             Text(
               'Current Balance',
-              style: TextStyle(color: Colors.black.withAlpha(100)),
+              style: TextStyle(
+                  color:
+                      const Color.fromARGB(255, 245, 233, 233).withAlpha(100)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
