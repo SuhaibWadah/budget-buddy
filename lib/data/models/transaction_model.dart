@@ -64,11 +64,10 @@ class TransactionModel {
       // fallback
       parsedDate = DateTime.now();
     }
-    print("${map['title']} ${map['categoryId']}");
     return TransactionModel(
-      id: map['id'],
-      title: map['title'],
-      note: map['note'],
+      id: map['transactionId'].toString(),
+      title: map['title'].toString(),
+      note: map['note'].toString(),
       amount: (map['amount'] as num).toDouble(),
       date: parsedDate,
       isExpense: (map['isExpense'] ?? 0) == 1,
@@ -80,7 +79,7 @@ class TransactionModel {
   /// For Firestore
   factory TransactionModel.fromFirestore(Map<String, dynamic> map) {
     return TransactionModel(
-      id: map['id'],
+      id: map['transactionId'],
       title: map['title'],
       note: map['note'],
       amount: (map['amount'] as num).toDouble(),

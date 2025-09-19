@@ -5,10 +5,6 @@ import 'package:expense_tracker/screens/main_screen.dart';
 import 'package:expense_tracker/screens/statistics_screen.dart';
 import 'package:expense_tracker/widgets/app_bar.dart';
 import 'package:expense_tracker/widgets/bottom_bar.dart';
-import 'package:expense_tracker/widgets/current_balance_card.dart';
-import 'package:expense_tracker/widgets/recent_transactions.dart';
-import 'package:expense_tracker/widgets/search_field.dart';
-import 'package:expense_tracker/widgets/total_balance_card.dart';
 import 'package:expense_tracker/widgets/transaction_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,10 +29,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // Load transactions once the widget is ready
-    Future.microtask(() async {
+    Future.microtask(() {
       if (mounted) {
-        await Provider.of<TransactionProvider>(context, listen: false)
-            .readRecentTransactions();
+        Provider.of<TransactionProvider>(context, listen: false)
+            .recentTransactions;
       }
     });
   }
@@ -62,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: Icon(Icons.add),
       ),
-      appBar: buildAppBar(),
+      appBar: buildAppBar(context),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,

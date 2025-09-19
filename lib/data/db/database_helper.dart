@@ -113,6 +113,5 @@ class DatabaseHelper {
         await txn.execute('PRAGMA foreign_keys=ON;');
       });
     }
-    print('upgraded!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
   }
 }

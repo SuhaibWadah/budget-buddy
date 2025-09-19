@@ -33,7 +33,7 @@ class TransactionsRepo {
   Future<List<Map<String, dynamic>>> readRecentTransactions() =>
       _runDbOperation('readRecent10transactions', (db) async {
         return await db.rawQuery(''' select
-t.id, t.title, t.note, t.amount, t.date, t.isExpense, t.categoryId,
+t.id as transactionId, t.title, t.note, t.amount, t.date, t.isExpense, t.categoryId,
         c.name AS categoryName from transactions t
     join categories c on t.categoryId = c.id
     order by t.date desc
@@ -62,10 +62,22 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense, t.categoryId,
         return await db.rawQuery(sql, args);
       });
 
-  Future<int> insertTransaction(Map<String, Object?> values) => _runDbOperation(
-        'insertTransaction',
-        (db) => db.insert('transactions', values),
-      );
+  Future<int> insertTransaction(Map<String, Object?> values) {
+    return _runDbOperation(
+      'insertTransaction',
+      (db) async {
+        final id = await db.insert('transactions', values);
+
+        // Debug: dump all rows after insert
+        final all = await db.query('transactions');
+        for (var row in all) {
+          debugPrint("Row after insert: $row");
+        }
+
+        return id;
+      },
+    );
+  }
 
   Future<int> deleteTransaction(String transactionId) => _runDbOperation(
         'deleteTransaction',
@@ -75,19 +87,24 @@ t.id, t.title, t.note, t.amount, t.date, t.isExpense, t.categoryId,
   Future<int> deleteAllTransactions() => _runDbOperation(
       'deleteAllTransactions', (db) => db.delete('transactions'));
 
-  Future<int> updateTransaction(
-    String transactionId,
-    Map<String, Object?> values,
-  ) =>
-      _runDbOperation(
-          'updateTransaction',
-          (db) => db.update(
-                'transactions',
-                values,
-                where: 'id = ?',
-                whereArgs: [transactionId],
-                // conflictAlgorithm: ConflictAlgorithm.replace,
-              ));
+  Future<int> updateTransaction(Map<String, Object?> values) async {
+    return await _runDbOperation('updateTransaction', (db) async {
+      debugPrint('Repo update WHERE id = ${values['id']}');
+      final all = await db.query('transactions');
+      debugPrint(all.map((t) => t['id']).toList().toString());
+
+      final count = await db.update(
+        'transactions',
+        values,
+        where: 'id = ?',
+        whereArgs: [values['id']],
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      debugPrint('DB updated $count row(s) for id ${values['id']}');
+      return count;
+    });
+  }
+
   Future<int> markTransactionAsSynced(String transactionId) => _runDbOperation(
         'markTransactionAsSynced',
         (db) => db.update(

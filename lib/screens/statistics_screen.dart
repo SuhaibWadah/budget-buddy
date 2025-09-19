@@ -3,7 +3,7 @@ import 'package:expense_tracker/widgets/total_balance_card.dart';
 import 'package:flutter/material.dart';
 
 class StatisticsScreen extends StatefulWidget {
-  StatisticsScreen({super.key});
+  const StatisticsScreen({super.key});
 
   @override
   _StatisticsScreenState createState() => _StatisticsScreenState();

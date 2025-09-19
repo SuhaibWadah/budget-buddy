@@ -23,20 +23,31 @@ class TransactionProvider with ChangeNotifier {
   List<TransactionModel> _transactions = [];
   List<TransactionModel> get transactions => _transactions;
 
-  List<TransactionModel> _recentTransactions = [];
-  List<TransactionModel> get recentTransactions => _recentTransactions;
+  List<TransactionModel> _filteredTransactions = [];
+  List<TransactionModel> get filteredTransactions => _filteredTransactions;
+
+  /// Returns last 10 added transactions (newest first)
+  List<TransactionModel> get recentTransactions =>
+      _transactions.reversed.take(10).toList();
 
   TransactionProvider(this._transRepo, this._transService);
 
+  void searchTransactions(String query) {
+    if (query.trim().isEmpty) {
+      _filteredTransactions = _transactions;
+    } else {
+      _filteredTransactions = _transactions
+          .where((tx) => tx.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    debugPrint("Search '$query' → ${_filteredTransactions.length} results");
+    notifyListeners();
+  }
+
   Future<void> addTransaction(TransactionModel trans) async {
     await _transRepo.insertTransaction(trans.toMap());
-
     _transactions.add(trans);
-    if (_recentTransactions.length == 10) {
-      _recentTransactions.removeAt(0);
-    }
-    _recentTransactions.add(trans);
-    readRecentTransactions();
+    print(trans.toMap().toString());
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {
@@ -47,15 +58,21 @@ class TransactionProvider with ChangeNotifier {
   }
 
   Future<void> updateTransaction(TransactionModel trans) async {
-    await _transRepo.updateTransaction(trans.id, trans.toMap());
-    print('Updated .....................................');
+    await _transRepo.updateTransaction(trans.toMap());
+    debugPrint('Updating transaction with id: ${trans.id}');
+
+    // Update the transaction in _transactions
     final index = _transactions.indexWhere((t) => t.id == trans.id);
-    if (index != -1) _transactions[index] = trans;
+    if (index != -1) {
+      _transactions[index] = trans;
+      debugPrint('_transactions updated');
+    }
+
+    // Reapply search filter to update _filteredTransactions
+    searchTransactions("");
+
     notifyListeners();
-    final index2 = _recentTransactions.indexWhere((t) => t.id == trans.id);
-    if (index2 != -1) _recentTransactions[index2] = trans;
-    notifyListeners();
-    print('Fully updated ................................');
+
     if (_authProvider!.isLoggedIn) {
       await _transService.updateTransaction(trans.id, trans);
       trans.isSynced = true;
@@ -63,25 +80,26 @@ class TransactionProvider with ChangeNotifier {
     }
   }
 
+  Future<void> deleteTransaction(String id) async {
+    await _transRepo.deleteTransaction(id);
+    _transactions.removeWhere((t) => t.id == id);
+    print('Delted Transaction with id $id');
+    notifyListeners();
+
+    if (_authProvider!.isLoggedIn) {
+      await _transService.deleteTransaction(await _getUid(), id);
+    }
+  }
+
   Future<void> deleteAllTransactions() async {
     await _transRepo.deleteAllTransactions();
-
     _transactions.clear();
-    _recentTransactions.clear();
+
+    searchTransactions("");
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {
       await _transService.deleteAllTransactions(await _getUid());
-    }
-  }
-
-  Future<void> deleteTransaction(String id) async {
-    await _transRepo.deleteTransaction(id);
-    _transactions.removeWhere((t) => t.id == id);
-    _recentTransactions.removeWhere((t) => t.id == id);
-    notifyListeners();
-    if (_authProvider!.isLoggedIn) {
-      await _transService.deleteTransaction(await _getUid(), id);
     }
   }
 
@@ -90,7 +108,10 @@ class TransactionProvider with ChangeNotifier {
     _transactions =
         local.map((trans) => TransactionModel.fromMap(trans)).toList();
 
-    notifyListeners();
+    // Update filtered transactions
+    searchTransactions("");
+
+    debugPrint("DB transactions: ${local.map((t) => t['title'])}");
 
     if (_authProvider!.isLoggedIn) {
       final remote = await _transService.readTransactions(await _getUid());
@@ -100,22 +121,14 @@ class TransactionProvider with ChangeNotifier {
           await _transRepo.insertTransaction(tx.toMap());
         }
       }
+
+      searchTransactions("");
       notifyListeners();
     }
   }
 
-  Future<void> readRecentTransactions() async {
-    final local = await _transRepo.readRecentTransactions();
-
-    _recentTransactions =
-        local.map((tx) => TransactionModel.fromMap(tx)).toList();
-
-    notifyListeners();
-  }
-
   double totalAmount({required bool isExpense, Period period = Period.day}) {
     final now = DateTime.now();
-
     DateTime start;
 
     switch (period) {
@@ -124,21 +137,20 @@ class TransactionProvider with ChangeNotifier {
         break;
       case Period.week:
         start = DateTime(now.year, now.month, now.day)
-            .subtract(Duration(days: now.weekday - 1)); // start of week (Mon)
+            .subtract(Duration(days: now.weekday - 1));
         break;
       case Period.month:
-        start = DateTime(now.year, now.month, 1); // first day of month
+        start = DateTime(now.year, now.month, 1);
         break;
       case Period.year:
-        start = DateTime(now.year, 1, 1); // first day of year
+        start = DateTime(now.year, 1, 1);
         break;
     }
 
     return _transactions
         .where((t) =>
             t.isExpense == isExpense &&
-            t.date.isAfter(
-                start.subtract(const Duration(seconds: 1)))) // include start
+            t.date.isAfter(start.subtract(const Duration(seconds: 1))))
         .fold(0.0, (sum, t) => sum + t.amount);
   }
 }

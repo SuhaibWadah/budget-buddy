@@ -5,22 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TransactionDialog extends StatefulWidget {
-  TransactionDialog(
-      {super.key,
-      this.id,
-      this.title,
-      this.note,
-      this.amount,
-      this.date,
-      this.isExpense,
-      this.categoryId});
-  String? id;
-  String? title;
-  String? note;
-  double? amount;
-  DateTime? date;
-  bool? isExpense;
-  int? categoryId;
+  const TransactionDialog({super.key, this.transaction});
+  final TransactionModel? transaction;
 
   @override
   _TransactionDialogState createState() => _TransactionDialogState();
@@ -42,15 +28,15 @@ class _TransactionDialogState extends State<TransactionDialog> {
     super.initState();
     final catProvider = context.read<CategoryProvider>();
     catProvider.readCategories();
-    _titleController.text = widget.title ?? '';
-    _amountController.text = widget.amount?.toString() ?? '';
-    _noteController.text = widget.note ?? '';
-    _selectedDate = widget.date ?? DateTime.now();
-    _isExpense = widget.isExpense ?? false;
-    if (mounted && widget.categoryId != null) {
-      _categoryId = widget.categoryId;
+    _titleController.text = widget.transaction?.title ?? '';
+    _amountController.text = widget.transaction?.amount.toString() ?? '';
+    _noteController.text = widget.transaction?.note ?? '';
+    _selectedDate = widget.transaction?.date ?? DateTime.now();
+    _isExpense = widget.transaction?.isExpense ?? false;
+    if (mounted && widget.transaction?.categoryId != null) {
+      _categoryId = widget.transaction?.categoryId;
     }
-    isUpdate = widget.title != null;
+    isUpdate = widget.transaction != null;
   }
 
   void clearFields() {
@@ -79,29 +65,37 @@ class _TransactionDialogState extends State<TransactionDialog> {
       return;
     }
 
+    // Make sure ID is correct
     final transaction = TransactionModel(
-      id: widget.id,
+      id: isUpdate == true
+          ? widget.transaction!.id // must exist for update
+          : null, // new transaction → generate UUID
       title: _titleController.text.trim(),
+      note: _noteController.text.trim(),
       amount: double.parse(_amountController.text.trim()),
       date: _selectedDate!,
-      isExpense: _isExpense!,
+      isExpense: _isExpense ?? true,
       categoryId: _categoryId!,
     );
-    setState(() {
-      isLoading = true;
-    });
-    isUpdate!
-        ? await transProvider.updateTransaction(transaction)
-        : await transProvider.addTransaction(transaction);
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(
-        content: Text(isUpdate ? 'Transaction Updated' : 'Transaction Saved')));
 
-    setState(() {
-      isLoading = false;
-    });
+    debugPrint(
+        'Submitting transaction with id: ${transaction.id}, categoryId: ${transaction.categoryId}');
+
+    setState(() => isLoading = true);
+
+    if (isUpdate == true) {
+      await transProvider.updateTransaction(transaction);
+    } else {
+      await transProvider.addTransaction(transaction);
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            isUpdate == true ? 'Transaction Updated' : 'Transaction Saved')));
+
+    setState(() => isLoading = false);
     clearFields();
     Navigator.of(context).pop();
   }

@@ -19,10 +19,11 @@ class _RecentTransactionsListState extends State<RecentTransactionsList> {
     final transactions = widget.transactions;
 
     return ListView.separated(
-      padding: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.only(top: 8.0),
       itemCount: transactions.length,
       itemBuilder: (context, index) {
         final trans = transactions[index];
+        debugPrint(trans.toMap().toString());
         return ListTile(
           style: ListTileStyle.drawer,
           leading: Icon(Icons.food_bank),
@@ -51,19 +52,18 @@ class _RecentTransactionsListState extends State<RecentTransactionsList> {
             borderRadius: BorderRadius.circular(20),
           ),
           onTap: () {
-            debugPrint(
-                " suiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${trans.categoryId}");
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => TransactionDetails(
-                        id: trans.id,
-                        title: trans.title,
-                        note: trans.note,
-                        amount: trans.amount,
-                        date: trans.date,
-                        isExpense: trans.isExpense,
-                        categoryId: trans.categoryId)));
+                    // builder: (context) => TransactionDetails(
+                    //     id: trans.id,
+                    //     title: trans.title,
+                    //     note: trans.note,
+                    //     amount: trans.amount,
+                    //     date: trans.date,
+                    //     isExpense: trans.isExpense,
+                    //     categoryId: trans.categoryId)
+                    builder: (context) => TransactionDetails(trans: trans)));
           },
         );
       },

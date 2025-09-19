@@ -1,6 +1,5 @@
 import 'package:expense_tracker/data/models/category_model.dart';
 import 'package:expense_tracker/providers/category_provider.dart';
-import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -7,11 +7,28 @@ import 'package:expense_tracker/widgets/total_balance_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class MainPage extends StatelessWidget {
-  MainPage({
+class MainPage extends StatefulWidget {
+  const MainPage({
     super.key,
   });
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
   List<TransactionModel> _transactions = [];
+  @override
+  void initState() {
+    Future.microtask(() {
+      if (mounted) {
+        Provider.of<TransactionProvider>(context, listen: false)
+            .recentTransactions;
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TransactionProvider>(context);
@@ -35,8 +52,7 @@ class MainPage extends StatelessWidget {
             Text('Recent Transactions'),
             Divider(),
             Expanded(
-                child: RecentTransactionsList(
-                    transactions: provider.recentTransactions)),
+                child: RecentTransactionsList(transactions: _transactions)),
           ],
         ),
       ),

@@ -54,7 +54,7 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${currentBalance}',
+                  '$currentBalance',
                   style: TextStyle(
                     color: currentBalance > 0 ? Colors.green : Colors.red,
                     fontSize: 35,
