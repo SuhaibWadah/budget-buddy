@@ -53,7 +53,7 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${currentBalance.toStringAsFixed(2)}',
+                  currentBalance.toStringAsFixed(2),
                   style: TextStyle(
                     color: currentBalance > 0 ? Colors.green : Colors.red,
                     fontSize: 35,

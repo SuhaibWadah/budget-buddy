@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PersonalCard extends StatelessWidget {
-  const PersonalCard({Key? key}) : super(key: key);
+  const PersonalCard({super.key});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -16,6 +16,7 @@ class PersonalCard extends StatelessWidget {
             ),
             title: Text('Suhaib'),
             subtitle: Text('Suhaibwadah@gmail.com'),
+            onTap: () {},
           )),
     );
   }
