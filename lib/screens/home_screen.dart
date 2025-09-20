@@ -2,6 +2,7 @@ import 'package:expense_tracker/data/models/transaction_model.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/screens/categories_screen.dart';
 import 'package:expense_tracker/screens/main_screen.dart';
+import 'package:expense_tracker/screens/settings.dart';
 import 'package:expense_tracker/screens/statistics_screen.dart';
 import 'package:expense_tracker/widgets/app_bar.dart';
 import 'package:expense_tracker/widgets/bottom_bar.dart';
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
     MainPage(),
     Categories(),
     StatisticsScreen(),
+    Settings(),
   ];
 
   @override

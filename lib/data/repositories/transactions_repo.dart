@@ -46,7 +46,7 @@ t.id as transactionId, t.title, t.note, t.amount, t.date, t.isExpense, t.categor
       _runDbOperation('readTransactions', (db) async {
         // Base query
         String sql = '''
-    select t.id, t.title, t.note, t.amount, t.date, t.isExpense,
+    select t.id as transactionId, t.title, t.note, t.amount, t.date, t.isExpense,
            t.isSynced, t.categoryId, c.id, c.name AS categoryName
     from transactions t
     join categories c ON t.categoryId = c.id

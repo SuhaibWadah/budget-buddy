@@ -17,7 +17,7 @@ class _TransactionDialogState extends State<TransactionDialog> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  DateTime? _selectedDate = DateTime.now();
+  DateTime? _selectedDate;
   bool? _isExpense;
   int? _categoryId;
   bool isLoading = false;

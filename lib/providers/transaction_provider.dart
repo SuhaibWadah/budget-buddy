@@ -40,14 +40,15 @@ class TransactionProvider with ChangeNotifier {
           .where((tx) => tx.title.toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
-    debugPrint("Search '$query' → ${_filteredTransactions.length} results");
+    print(
+        'Searching Transactions called: ${filteredTransactions.map((t) => '${t.id} and ${t.title}')} Searching done!!!!!!!!!!!111');
     notifyListeners();
   }
 
   Future<void> addTransaction(TransactionModel trans) async {
     await _transRepo.insertTransaction(trans.toMap());
     _transactions.add(trans);
-    print(trans.toMap().toString());
+    print('Added : ${trans.toMap().toString()}');
     notifyListeners();
 
     if (_authProvider!.isLoggedIn) {

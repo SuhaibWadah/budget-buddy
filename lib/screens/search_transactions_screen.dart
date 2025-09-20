@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/widgets/recent_transactions.dart';
 import 'package:flutter/material.dart';

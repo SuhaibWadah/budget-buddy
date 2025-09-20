@@ -47,14 +47,13 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
             Text(
               'Current Balance',
               style: TextStyle(
-                  color:
-                      const Color.fromARGB(255, 245, 233, 233).withAlpha(100)),
+                  color: const Color.fromARGB(255, 87, 73, 73).withAlpha(100)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$currentBalance',
+                  '${currentBalance.toStringAsFixed(2)}',
                   style: TextStyle(
                     color: currentBalance > 0 ? Colors.green : Colors.red,
                     fontSize: 35,
