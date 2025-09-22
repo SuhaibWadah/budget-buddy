@@ -1,3 +1,4 @@
+import 'package:expense_tracker/providers/settings_provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +54,7 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  currentBalance.toStringAsFixed(2),
+                  "${currentBalance.toStringAsFixed(2)} ${context.watch<SettingsProvider>().settings.currency}",
                   style: TextStyle(
                     color: currentBalance > 0 ? Colors.green : Colors.red,
                     fontSize: 35,

@@ -1,5 +1,7 @@
+import 'package:expense_tracker/providers/settings_provider.dart';
 import 'package:expense_tracker/widgets/personal_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -11,6 +13,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = context.watch<SettingsProvider>();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,8 +32,12 @@ class _SettingsState extends State<Settings> {
                 title: Text('Dark mode'),
                 subtitle: Text('Enable dark mode'),
                 secondary: Icon(Icons.dark_mode),
-                value: true,
-                onChanged: (v) => setState(() {}),
+                value: settingsProvider.settings.isDarkTheme,
+                onChanged: (_) {
+                  setState(() {
+                    settingsProvider.toggleTheme();
+                  });
+                },
               ),
             ),
             Card(
@@ -41,8 +48,12 @@ class _SettingsState extends State<Settings> {
                 title: Text('Notifications'),
                 subtitle: Text('Receive transactions alerts'),
                 secondary: Icon(Icons.notifications),
-                value: true,
-                onChanged: (v) => setState(() {}),
+                value: settingsProvider.settings.notificationsEnabled,
+                onChanged: (_) {
+                  setState(() {
+                    settingsProvider.toggleNotification();
+                  });
+                },
               ),
             ),
             Card(
@@ -51,7 +62,8 @@ class _SettingsState extends State<Settings> {
               color: Colors.grey.shade100,
               child: ListTile(
                 title: Text('Currency'),
-                subtitle: Text('Current: USD'),
+                subtitle:
+                    Text('Current: ${settingsProvider.settings.currency}'),
                 leading: Icon(Icons.attach_money_outlined),
                 trailing: Icon(Icons.arrow_forward_ios),
                 onTap: () {
@@ -110,6 +122,7 @@ void _export(BuildContext context) {
 }
 
 void _showCurrencyDialog(BuildContext context) {
+  final settingsProvider = context.read<SettingsProvider>();
   showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -120,36 +133,42 @@ void _showCurrencyDialog(BuildContext context) {
                 ListTile(
                   title: Text("USD"),
                   onTap: () {
+                    settingsProvider.changeCurrency("USD");
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   title: Text("YER"),
                   onTap: () {
+                    settingsProvider.changeCurrency("YER");
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   title: Text("SAR"),
                   onTap: () {
+                    settingsProvider.changeCurrency("SAR");
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   title: Text("EGP"),
                   onTap: () {
+                    settingsProvider.changeCurrency("EGP");
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   title: Text("EUR"),
                   onTap: () {
+                    settingsProvider.changeCurrency("EUR");
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   title: Text("JPY"),
                   onTap: () {
+                    settingsProvider.changeCurrency("JPY");
                     Navigator.pop(context);
                   },
                 )
@@ -159,6 +178,7 @@ void _showCurrencyDialog(BuildContext context) {
 }
 
 void _showLanguageDialog(BuildContext context) {
+  final settingsProvider = context.read<SettingsProvider>();
   showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -167,12 +187,14 @@ void _showLanguageDialog(BuildContext context) {
               ListTile(
                 title: Text("English"),
                 onTap: () {
+                  settingsProvider.changeLanguage("en");
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: Text("Arabic"),
                 onTap: () {
+                  settingsProvider.changeLanguage("ar");
                   Navigator.pop(context);
                 },
               ),

@@ -1,8 +1,10 @@
 import 'package:expense_tracker/data/db/database_helper.dart';
+import 'package:expense_tracker/data/models/settings_adabter.dart';
 import 'package:expense_tracker/data/repositories/categories_repo.dart';
 import 'package:expense_tracker/data/repositories/transactions_repo.dart';
 import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/providers/auth_provider.dart';
+import 'package:expense_tracker/providers/settings_provider.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/services/auth_service.dart';
 import 'package:expense_tracker/services/category_service.dart';
@@ -11,12 +13,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/providers/category_provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await DatabaseHelper().db;
+  await Hive.initFlutter();
+  Hive.registerAdapter(SettingsModelAdapter());
   runApp(ExpenseApp());
 }
 
@@ -42,6 +47,8 @@ class ExpenseApp extends StatelessWidget {
           update: (_, authProvider, transProvider) =>
               transProvider!..updateAuth(authProvider),
         ),
+
+        ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
 
         // CategoryProvider also depends on AuthProvider
         ChangeNotifierProxyProvider<AuthProvider, CategoryProvider>(
