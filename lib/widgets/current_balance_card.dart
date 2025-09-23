@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CurrentBalanceCard extends StatefulWidget {
-  const CurrentBalanceCard({super.key});
+  const CurrentBalanceCard({super.key, this.period = Period.day});
+  final Period period;
 
   @override
   _CurrentBalanceCardState createState() => _CurrentBalanceCardState();
@@ -22,8 +23,10 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
   Widget build(BuildContext context) {
     final provider = context.watch<TransactionProvider>();
     final currentBalance =
-        provider.totalAmount(isExpense: false, period: Period.day) -
-            provider.totalAmount(isExpense: true, period: Period.day);
+        provider.totalAmount(isExpense: false, period: widget.period) -
+            provider.totalAmount(isExpense: true, period: widget.period);
+    print(
+        'oooooooooooooooooooooooooooooooooooooooooo ${currentBalance} 000000000000000000000000000000000000');
     return Container(
       width: double.infinity,
       height: 120,

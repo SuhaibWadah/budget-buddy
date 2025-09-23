@@ -128,7 +128,7 @@ class TransactionProvider with ChangeNotifier {
     }
   }
 
-  double totalAmount({required bool isExpense, Period period = Period.day}) {
+  double totalAmount({bool? isExpense, Period period = Period.day}) {
     final now = DateTime.now();
     DateTime start;
 

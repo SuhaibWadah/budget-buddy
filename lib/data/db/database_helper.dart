@@ -22,7 +22,7 @@ class DatabaseHelper {
     String path = join(databasePath, 'expenses.db');
     Database mydb = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -36,7 +36,7 @@ class DatabaseHelper {
       "id" text not null primary key,
       "title" text not null,
       "note" text,
-      "date" text not null,
+      "date" integer not null,
       "amount" real not null,
       "isExpense" integer not null,
       "isSynced" integer not null,
@@ -113,5 +113,6 @@ class DatabaseHelper {
         await txn.execute('PRAGMA foreign_keys=ON;');
       });
     }
+    print('Running upgrade from $oldVersion to $newVersion');
   }
 }

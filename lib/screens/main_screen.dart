@@ -39,12 +39,22 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           spacing: 16,
           children: [
-            CurrentBalanceCard(),
+            CurrentBalanceCard(
+              period: Period.day,
+            ),
             Row(
               spacing: 16,
               children: [
-                Expanded(child: TotalBalanceCard(isExpense: true)),
-                Expanded(child: TotalBalanceCard(isExpense: false)),
+                Expanded(
+                    child: TotalBalanceCard(
+                  isExpense: true,
+                  period: Period.day,
+                )),
+                Expanded(
+                    child: TotalBalanceCard(
+                  isExpense: false,
+                  period: Period.day,
+                )),
               ],
             ),
             SizedBox(height: 8),

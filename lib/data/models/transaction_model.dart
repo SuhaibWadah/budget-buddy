@@ -55,17 +55,17 @@ class TransactionModel {
     DateTime parsedDate;
 
     if (rawDate is int) {
-      // ✅ Already stored as timestamp
       parsedDate = DateTime.fromMillisecondsSinceEpoch(rawDate);
     } else if (rawDate is String) {
-      // ✅ Old string format (e.g., "2025-09-16")
       parsedDate = DateTime.tryParse(rawDate) ?? DateTime.now();
+    } else if (rawDate is DateTime) {
+      parsedDate = rawDate;
     } else {
-      // fallback
-      parsedDate = DateTime.now();
+      // Log or handle unexpected format
+      throw FormatException('Invalid date format: ${rawDate.runtimeType}');
     }
     return TransactionModel(
-      id: map['transactionId'].toString(),
+      id: map['transactionId']?.toString() ?? const Uuid().v4(),
       title: map['title'].toString(),
       note: map['note'].toString(),
       amount: (map['amount'] as num).toDouble(),
@@ -79,7 +79,7 @@ class TransactionModel {
   /// For Firestore
   factory TransactionModel.fromFirestore(Map<String, dynamic> map) {
     return TransactionModel(
-      id: map['transactionId'],
+      id: map['id'] ?? const Uuid().v4(),
       title: map['title'],
       note: map['note'],
       amount: (map['amount'] as num).toDouble(),

@@ -1,10 +1,13 @@
+import 'package:expense_tracker/providers/settings_provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TotalBalanceCard extends StatefulWidget {
-  const TotalBalanceCard({super.key, required this.isExpense});
+  const TotalBalanceCard(
+      {super.key, required this.isExpense, required this.period});
   final bool isExpense;
+  final Period period;
 
   @override
   _TotalBalanceCardState createState() => _TotalBalanceCardState();
@@ -14,6 +17,8 @@ class _TotalBalanceCardState extends State<TotalBalanceCard> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<TransactionProvider>();
+    final total = provider.totalAmount(
+        isExpense: widget.isExpense, period: widget.period);
     return Container(
       width: double.infinity,
       height: 100,
@@ -51,9 +56,9 @@ class _TotalBalanceCardState extends State<TotalBalanceCard> {
             ),
             Text(
               widget.isExpense
-                  ? '${provider.totalAmount(isExpense: true, period: Period.day)}'
-                  : '${provider.totalAmount(isExpense: false, period: Period.day)}',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ? '$total ${context.watch<SettingsProvider>().settings.currency}'
+                  : '$total ${context.watch<SettingsProvider>().settings.currency}',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ],
         ),
