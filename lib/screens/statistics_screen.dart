@@ -1,4 +1,5 @@
 import 'package:expense_tracker/providers/transaction_provider.dart';
+import 'package:expense_tracker/widgets/category_consumption.dart';
 import 'package:expense_tracker/widgets/current_balance_card.dart';
 import 'package:expense_tracker/widgets/total_balance_card.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +48,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       isExpense: false, period: _selectedPeriod)),
             ],
           ),
-          SizedBox(height: 8),
           Text('Categories Summary'),
           Divider(),
+          Expanded(child: CategoryConsumption()),
         ]));
   }
 }
