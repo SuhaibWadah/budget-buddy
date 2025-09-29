@@ -26,7 +26,7 @@ class _CurrentBalanceCardState extends State<CurrentBalanceCard> {
         provider.totalAmount(isExpense: false, period: widget.period) -
             provider.totalAmount(isExpense: true, period: widget.period);
     print(
-        'oooooooooooooooooooooooooooooooooooooooooo ${currentBalance} 000000000000000000000000000000000000');
+        'oooooooooooooooooooooooooooooooooooooooooo $currentBalance 000000000000000000000000000000000000');
     return Container(
       width: double.infinity,
       height: 120,

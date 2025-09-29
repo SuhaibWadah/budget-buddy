@@ -5,6 +5,7 @@ import 'package:expense_tracker/data/repositories/transactions_repo.dart';
 import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/providers/auth_provider.dart';
 import 'package:expense_tracker/providers/settings_provider.dart';
+import 'package:expense_tracker/screens/auth_page.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/services/auth_service.dart';
 import 'package:expense_tracker/services/category_service.dart';

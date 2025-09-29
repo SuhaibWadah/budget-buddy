@@ -32,29 +32,6 @@ class TransactionProvider with ChangeNotifier {
 
   TransactionProvider(this._transRepo, this._transService);
 
-  double get totalSpendings {
-    return transactions
-        .where((t) => t.isExpense)
-        .fold(0.0, (sum, t) => sum + t.amount);
-  }
-
-  Map<int, double> get categoryTotals {
-    final map = <int, double>{};
-    for (var tx in transactions) {
-      if (tx.isExpense) {
-        map[tx.categoryId] = (map[tx.categoryId] ?? 0) + tx.amount;
-      }
-    }
-    return map;
-  }
-
-  Map<int, double> get categoryPercentages {
-    final total = totalSpendings;
-    if (total == 0) return {};
-    return categoryTotals
-        .map((id, amount) => MapEntry(id, (amount / total).clamp(0.0, 1.0)));
-  }
-
   void searchTransactions(String query) {
     if (query.trim().isEmpty) {
       _filteredTransactions = _transactions;

@@ -57,19 +57,20 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD3vlAj54pxfA7qWxR9vlTAvEkvE2sAMNI',
-    appId: '1:187356985024:android:66f0add1f60163ab35df25',
-    messagingSenderId: '187356985024',
-    projectId: 'budget-buddy-dfe65',
-    storageBucket: 'budget-buddy-dfe65.firebasestorage.app',
+    apiKey: 'AIzaSyDgdkes7DUUvJfkoih_WHM8uSZFh-nmAvY',
+    appId: '1:397941480289:android:d41b39bc6881953bb18320',
+    messagingSenderId: '397941480289',
+    projectId: 'budget-buddy-tracker',
+    storageBucket: 'budget-buddy-tracker.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBF04-VZs01ukIzQlM1XFeTVM7OxspzVDY',
-    appId: '1:187356985024:ios:94849156169958d935df25',
-    messagingSenderId: '187356985024',
-    projectId: 'budget-buddy-dfe65',
-    storageBucket: 'budget-buddy-dfe65.firebasestorage.app',
+    apiKey: 'AIzaSyD4Bzg9kfJA-0hAJAG4zCSydrpXMeII4Xg',
+    appId: '1:397941480289:ios:f5f684914ba559f0b18320',
+    messagingSenderId: '397941480289',
+    projectId: 'budget-buddy-tracker',
+    storageBucket: 'budget-buddy-tracker.firebasestorage.app',
     iosBundleId: 'com.example.expenseTracker',
   );
+
 }

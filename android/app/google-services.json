@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "187356985024",
-    "project_id": "budget-buddy-dfe65",
-    "storage_bucket": "budget-buddy-dfe65.firebasestorage.app"
+    "project_number": "397941480289",
+    "project_id": "budget-buddy-tracker",
+    "storage_bucket": "budget-buddy-tracker.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:187356985024:android:66f0add1f60163ab35df25",
+        "mobilesdk_app_id": "1:397941480289:android:d41b39bc6881953bb18320",
         "android_client_info": {
           "package_name": "com.example.expense_tracker"
         }
@@ -15,26 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD3vlAj54pxfA7qWxR9vlTAvEkvE2sAMNI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:187356985024:android:a6ebcfe0ccd8c0d935df25",
-        "android_client_info": {
-          "package_name": "com.suhaib.budgetbuddy"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD3vlAj54pxfA7qWxR9vlTAvEkvE2sAMNI"
+          "current_key": "AIzaSyDgdkes7DUUvJfkoih_WHM8uSZFh-nmAvY"
         }
       ],
       "services": {

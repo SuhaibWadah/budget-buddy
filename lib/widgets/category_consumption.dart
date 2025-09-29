@@ -6,6 +6,8 @@ import 'package:expense_tracker/data/models/category_model.dart';
 import 'package:expense_tracker/data/models/transaction_model.dart';
 
 class CategoryConsumption extends StatefulWidget {
+  const CategoryConsumption({super.key});
+
   @override
   _CategoryConsumption createState() => _CategoryConsumption();
 }
