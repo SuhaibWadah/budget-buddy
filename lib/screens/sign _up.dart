@@ -5,6 +5,7 @@ class SignUpForm extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  final _displayNameController = TextEditingController();
   final AuthService _auth = AuthService();
   SignUpForm({super.key});
 
@@ -16,6 +17,10 @@ class SignUpForm extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            TextFormField(
+              controller: _displayNameController,
+              decoration: const InputDecoration(labelText: "User Name"),
+            ),
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: "Email"),
@@ -35,8 +40,15 @@ class SignUpForm extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                _auth.register(_emailController.text.trim(),
-                    _passwordController.text.trim());
+                if (_passwordController.text.trim() !=
+                    _confirmController.text.trim()) {
+                  throw 'Passwords don\'t match, please check password again';
+                } else {
+                  _auth.register(
+                      email: _emailController.text.trim(),
+                      password: _passwordController.text.trim(),
+                      displayName: _displayNameController.text.trim());
+                }
               },
               child: const Text("Sign Up"),
             ),

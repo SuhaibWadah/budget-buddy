@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,12 +30,19 @@ class AuthService {
     }
   }
 
-  Future<User?> register(String email, String password) async {
+  Future<User?> register(
+      {required String email,
+      required String password,
+      required String displayName}) async {
     try {
       final credentials = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      await credentials.user?.updateDisplayName(displayName);
+      await credentials.user?.reload();
+
       return credentials.user;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -57,6 +65,19 @@ class AuthService {
       await _auth.signOut();
     } catch (e) {
       throw Exception('Sign-out failed: $e');
+    }
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      debugPrint('Password reset email sent to: $email');
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Password reset error: ${e.code} - ${e.message}');
+      throw Exception('Password reset error');
+    } catch (e) {
+      debugPrint('Unknown password reset error: $e');
+      throw 'Failed to send password reset email. Please try again.';
     }
   }
 }

@@ -1,20 +1,21 @@
+import 'dart:math';
+
 import 'package:expense_tracker/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 enum AuthStatus { uninitialized, authenticated, unauthenticated }
 
-class AuthProvider with ChangeNotifier {
+class AuthProviders with ChangeNotifier {
   final AuthService _authService;
   User? _user;
   AuthStatus _status = AuthStatus.uninitialized;
 
-  AuthProvider(this._authService) {
+  AuthProviders(this._authService) {
     _authService.authStateChanges.listen((user) {
       _user = user;
-      _status = user == null
-          ? AuthStatus.unauthenticated
-          : AuthStatus.authenticated;
+      _status =
+          user == null ? AuthStatus.unauthenticated : AuthStatus.authenticated;
       notifyListeners();
     });
   }
@@ -27,9 +28,8 @@ class AuthProvider with ChangeNotifier {
     try {
       final user = await _authService.signIn(email, password);
       _user = user;
-      _status = _user == null
-          ? AuthStatus.unauthenticated
-          : AuthStatus.authenticated;
+      _status =
+          _user == null ? AuthStatus.unauthenticated : AuthStatus.authenticated;
     } catch (e) {
       _status = AuthStatus.unauthenticated;
       rethrow;
@@ -38,13 +38,14 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> register(String email, String password) async {
+  Future<void> register(
+      String displayName, String email, String password) async {
     try {
-      final user = await _authService.register(email, password);
+      final user = await _authService.register(
+          displayName: displayName, email: email, password: password);
       _user = user;
-      _status = _user == null
-          ? AuthStatus.unauthenticated
-          : AuthStatus.authenticated;
+      _status =
+          _user == null ? AuthStatus.unauthenticated : AuthStatus.authenticated;
     } catch (e) {
       _status = AuthStatus.unauthenticated;
       rethrow;

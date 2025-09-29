@@ -5,7 +5,7 @@ import 'package:expense_tracker/data/repositories/transactions_repo.dart';
 import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/providers/auth_provider.dart';
 import 'package:expense_tracker/providers/settings_provider.dart';
-import 'package:expense_tracker/screens/auth_page.dart';
+import 'package:expense_tracker/screens/auth_wrapper.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/services/auth_service.dart';
 import 'package:expense_tracker/services/category_service.dart';
@@ -38,12 +38,12 @@ class ExpenseApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(authService),
+        ChangeNotifierProvider<AuthProviders>(
+          create: (_) => AuthProviders(authService),
         ),
 
         // TransactionProvider depends on AuthProvider
-        ChangeNotifierProxyProvider<AuthProvider, TransactionProvider>(
+        ChangeNotifierProxyProvider<AuthProviders, TransactionProvider>(
           create: (_) => TransactionProvider(transRepo, transService),
           update: (_, authProvider, transProvider) =>
               transProvider!..updateAuth(authProvider),
@@ -52,13 +52,14 @@ class ExpenseApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
 
         // CategoryProvider also depends on AuthProvider
-        ChangeNotifierProxyProvider<AuthProvider, CategoryProvider>(
+        ChangeNotifierProxyProvider<AuthProviders, CategoryProvider>(
           create: (_) => CategoryProvider(catRepo, catService),
           update: (_, authProvider, catProvider) =>
               catProvider!..updateAuth(authProvider),
         ),
       ],
-      child: MaterialApp(debugShowCheckedModeBanner: false, home: HomePage()),
+      child:
+          MaterialApp(debugShowCheckedModeBanner: false, home: AuthWrapper()),
     );
   }
 }

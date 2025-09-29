@@ -7,16 +7,18 @@ import 'package:flutter/material.dart';
 enum Period { day, week, month, year }
 
 class TransactionProvider with ChangeNotifier {
-  AuthProvider? _authProvider;
+  AuthProviders? _authProvider;
   final TransactionsRepo _transRepo;
   final TransactionService _transService;
 
   Future<String> _getUid() async {
-    final userId = _authProvider!.user!.uid;
-    return userId;
+    if (_authProvider == null || _authProvider!.user == null) {
+      throw Exception("User not logged in");
+    }
+    return _authProvider!.user!.uid;
   }
 
-  void updateAuth(AuthProvider authProvider) {
+  void updateAuth(AuthProviders authProvider) {
     _authProvider = authProvider;
   }
 

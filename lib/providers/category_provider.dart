@@ -5,7 +5,7 @@ import 'package:expense_tracker/services/category_service.dart';
 import 'package:flutter/material.dart';
 
 class CategoryProvider with ChangeNotifier {
-  AuthProvider? _authProvider;
+  AuthProviders? _authProvider;
   final CategoriesRepo _catRepo;
   final CategoryService _catServie;
 
@@ -14,7 +14,7 @@ class CategoryProvider with ChangeNotifier {
 
   CategoryProvider(this._catRepo, this._catServie);
 
-  void updateAuth(AuthProvider authProvider) {
+  void updateAuth(AuthProviders authProvider) {
     _authProvider = authProvider;
   }
 
